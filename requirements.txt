@@ -1,0 +1,14 @@
+# verified combination (Sep 2026): trl==1.12.0 transformers==5.16.1 datasets==5.0.1
+trl>=1.11
+transformers>=5.2
+datasets>=3.0
+peft>=0.15
+accelerate
+torch>=2.5
+wandb
+matplotlib
+flash-linear-attention      # Qwen3.5 Gated-DeltaNet fast kernels (import name: fla)
+wordfreq                    # wordmaze verifier dictionary
+# optional:
+# causal-conv1d             # second Qwen3.5 kernel, compiles from source
+# vllm==0.27.1              # fast generation; first release with text-only Qwen3.5 (TRL 1.12 allows <=0.27.1)

@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GRPO Puzzles</title>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#F5F7FA; --paper-2:#EBEFF4; --ink:#1B2331; --ink-2:#4B566A; --ink-3:#7A8496; --line:#D3D9E3;
+  --accent:#2457C5; --accent-soft:#DCE6FA;
+  --pass:#157F5F; --pass-soft:#DBF1E8; --partial:#B7791F; --partial-soft:#F8ECD4; --fail:#B42318; --fail-soft:#F9DEDA;
+  --code-bg:#E9EDF3;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11161E; --paper-2:#181F2A; --ink:#E6EAF1; --ink-2:#AEB7C6; --ink-3:#7E889A; --line:#2A3342;
+    --accent:#7BA2F5; --accent-soft:#1E2B45;
+    --pass:#3FC28E; --pass-soft:#12332A; --partial:#E2A93B; --partial-soft:#3A2C12; --fail:#F0716A; --fail-soft:#3D1B18;
+    --code-bg:#1C2431;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11161E; --paper-2:#181F2A; --ink:#E6EAF1; --ink-2:#AEB7C6; --ink-3:#7E889A; --line:#2A3342;
+  --accent:#7BA2F5; --accent-soft:#1E2B45;
+  --pass:#3FC28E; --pass-soft:#12332A; --partial:#E2A93B; --partial-soft:#3A2C12; --fail:#F0716A; --fail-soft:#3D1B18;
+  --code-bg:#1C2431;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;font-variant-numeric:tabular-nums}
+.wrap{max-width:980px;margin:0 auto;padding:40px 24px 80px}
+.col{max-width:70ch}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;letter-spacing:-0.01em;margin:0}
+h1{font-size:clamp(34px,5vw,52px);line-height:1.02;font-weight:700}
+h2{font-size:26px;line-height:1.15;margin-top:64px;font-weight:700}
+h3{font-size:19px;margin-top:28px;font-weight:600}
+p{margin:12px 0}
+.lede{font-size:19px;color:var(--ink-2);max-width:62ch}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{background:var(--code-bg);padding:14px 16px;border-radius:6px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.5;margin:14px 0}
+pre code{background:none;padding:0}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:13px;color:var(--ink-2);background:var(--paper-2)}
+.chip b{font-family:var(--display);font-weight:700;color:var(--ink);font-size:14px}
+.badge{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;font-family:var(--display);font-weight:700;font-size:13px;color:#fff;background:var(--accent)}
+.badge.w{background:var(--pass)}
+.band{margin:22px -24px;padding:26px 24px;background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.band figure{margin:0}
+figcaption{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);margin-top:10px;line-height:1.5}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.s-ink{fill:var(--ink)} .s-ink2{fill:var(--ink-2)} .s-ink3{fill:var(--ink-3)}
+.s-line{stroke:var(--line)} .s-acc{fill:var(--accent)} .s-accs{fill:var(--accent-soft)}
+.s-pass{fill:var(--pass)} .s-passs{fill:var(--pass-soft)} .s-part{fill:var(--partial)} .s-parts{fill:var(--partial-soft)} .s-fail{fill:var(--fail)} .s-fails{fill:var(--fail-soft)}
+.st-acc{stroke:var(--accent)} .st-ink3{stroke:var(--ink-3)} .st-pass{stroke:var(--pass)} .st-part{stroke:var(--partial)} .st-fail{stroke:var(--fail)} .st-ink{stroke:var(--ink)}
+.f-mono{font-family:var(--mono)} .f-disp{font-family:var(--display);font-weight:700} .f-serif{font-family:var(--serif)}
+.box{fill:var(--paper);stroke:var(--line)}
+.callout{border-left:3px solid var(--accent);padding:10px 16px;margin:18px 0;background:var(--accent-soft);border-radius:0 6px 6px 0}
+.callout.warn{border-color:var(--partial);background:var(--partial-soft)}
+.callout p{margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:14px 0}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+td:first-child{font-family:var(--display);font-weight:600;white-space:nowrap}
+.tbl{overflow-x:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-family:var(--mono);font-size:12px;font-weight:600}
+.pill.pass{background:var(--pass-soft);color:var(--pass)} .pill.part{background:var(--partial-soft);color:var(--partial)} .pill.fail{background:var(--fail-soft);color:var(--fail)} .pill.acc{background:var(--accent-soft);color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+dl{margin:14px 0}
+dt{font-family:var(--display);font-weight:600;margin-top:14px}
+dd{margin:4px 0 0 0;color:var(--ink-2)}
+ol.plan{counter-reset:step;list-style:none;padding:0;margin:14px 0}
+ol.plan li{position:relative;padding:10px 0 10px 44px;border-bottom:1px solid var(--line)}
+ol.plan li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:11px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:14px}
+ol.plan li b{font-family:var(--display)}
+.small{font-size:14px;color:var(--ink-2)}
+hr{border:0;border-top:1px solid var(--line);margin:40px 0}
+@media (prefers-reduced-motion: no-preference){ .pulse{animation:pulse 2.4s ease-in-out infinite} @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}} }
+</style>
+
+<div class="wrap">
+  <header class="col">
+    <div class="eyebrow">Learning ML · RL from verifiable rewards · Sep 2026</div>
+    <h1 style="margin-top:10px">GRPO Puzzles</h1>
+    <p class="lede">Two small reinforcement-learning projects, one machine. A <em>base</em> 0.8B model learns to solve the Countdown numbers game with no demonstrations; a 4B model is pointed at a word-ladder puzzle whose author showed naive RL makes things worse. This page is the picture version of the two <code>GUIDE.md</code> files.</p>
+    <div class="chips">
+      <span class="chip"><span class="badge">98</span><b>Countdown</b> Qwen3.5-0.8B-Base · 490k puzzles · one evening</span>
+      <span class="chip"><span class="badge w">F/B</span><b>Wordmaze</b> Qwen3.5-4B · 2k puzzles · 1–2 weeks</span>
+    </div>
+  </header>
+
+  <!-- ============================ THE LOOP ============================ -->
+  <section>
+    <h2>The loop both projects run</h2>
+    <div class="col">
+      <p>GRPO has no critic and no learned reward model. For every prompt it samples a <strong>group</strong> of eight answers, a Python function scores each one, and the score is turned into an advantage by normalising <em>inside the group</em>. Tokens in above-average answers get pushed up, the rest down, with a PPO-style clip.</p>
+    </div>
+    <div class="band"><figure>
+      <svg viewBox="0 0 940 300" role="img" aria-label="GRPO loop: prompt, eight sampled completions, verifier, group normalisation, policy update, back to sampling">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker></defs>
+        <!-- prompt -->
+        <rect x="10" y="90" width="150" height="120" rx="6" class="box" stroke-width="1.2"/>
+        <text x="85" y="114" text-anchor="middle" class="s-ink f-disp" font-size="14">prompt</text>
+        <text x="85" y="138" text-anchor="middle" class="s-ink2 f-mono" font-size="11.5">nums [44,19,35]</text>
+        <text x="85" y="154" text-anchor="middle" class="s-ink2 f-mono" font-size="11.5">target 98</text>
+        <text x="85" y="182" text-anchor="middle" class="s-ink3 f-serif" font-size="12" font-style="italic">ends with &lt;think&gt;</text>
+        <path d="M160 150 H205" class="st-acc" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+        <!-- policy -->
+        <rect x="210" y="70" width="170" height="160" rx="6" class="s-accs"/>
+        <rect x="210" y="70" width="170" height="160" rx="6" fill="none" class="st-acc" stroke-width="1.2"/>
+        <text x="295" y="96" text-anchor="middle" class="s-ink f-disp" font-size="14">policy π<tspan baseline-shift="sub" font-size="10">θ</tspan></text>
+        <text x="295" y="114" text-anchor="middle" class="s-ink2 f-mono" font-size="11">T = 1.0 · ≤ 512 tok</text>
+        <g class="f-mono" font-size="10.5">
+          <rect x="226" y="126" width="138" height="11" rx="2" class="s-pass" opacity=".85"/><text x="230" y="135" fill="#fff">1  …63+35=98 ✓</text>
+          <rect x="226" y="140" width="138" height="11" rx="2" class="s-fail" opacity=".8"/><text x="230" y="149" fill="#fff">2  …44*19-35</text>
+          <rect x="226" y="154" width="138" height="11" rx="2" class="s-fail" opacity=".8"/><text x="230" y="163" fill="#fff">3  …no &lt;answer&gt;</text>
+          <rect x="226" y="168" width="138" height="11" rx="2" class="s-pass" opacity=".85"/><text x="230" y="177" fill="#fff">4  …(44+19)+35 ✓</text>
+          <rect x="226" y="182" width="138" height="11" rx="2" class="s-fail" opacity=".8"/><text x="230" y="191" fill="#fff">5  …uses 44 twice</text>
+          <text x="295" y="212" text-anchor="middle" class="s-ink3" font-size="11">… 8 completions</text>
+        </g>
+        <path d="M380 150 H425" class="st-acc" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+        <!-- verifier -->
+        <rect x="430" y="90" width="150" height="120" rx="6" class="box" stroke-width="1.2"/>
+        <text x="505" y="114" text-anchor="middle" class="s-ink f-disp" font-size="14">verifier</text>
+        <text x="505" y="134" text-anchor="middle" class="s-ink2 f-serif" font-size="12.5">plain Python</text>
+        <text x="505" y="160" text-anchor="middle" class="s-ink f-mono" font-size="12">r = [1,0,0,1,0,0,0,0]</text>
+        <text x="505" y="186" text-anchor="middle" class="s-ink3 f-serif" font-size="12" font-style="italic">no judge model</text>
+        <path d="M580 150 H625" class="st-acc" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+        <!-- advantage -->
+        <rect x="630" y="90" width="150" height="120" rx="6" class="box" stroke-width="1.2"/>
+        <text x="705" y="114" text-anchor="middle" class="s-ink f-disp" font-size="14">group advantage</text>
+        <text x="705" y="142" text-anchor="middle" class="s-ink f-serif" font-size="15">A<tspan baseline-shift="sub" font-size="10">i</tspan> = (r<tspan baseline-shift="sub" font-size="10">i</tspan> − r̄) / σ<tspan baseline-shift="sub" font-size="10">r</tspan></text>
+        <text x="705" y="166" text-anchor="middle" class="s-ink2 f-mono" font-size="11.5">r̄ = 0.25  σ = 0.43</text>
+        <text x="705" y="186" text-anchor="middle" class="s-ink2 f-mono" font-size="11.5">A = [+1.7, −0.6, …]</text>
+        <path d="M780 150 H825" class="st-acc" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+        <!-- update -->
+        <rect x="830" y="90" width="100" height="120" rx="6" class="s-accs"/>
+        <rect x="830" y="90" width="100" height="120" rx="6" fill="none" class="st-acc" stroke-width="1.2"/>
+        <text x="880" y="128" text-anchor="middle" class="s-ink f-disp" font-size="14">update</text>
+        <text x="880" y="150" text-anchor="middle" class="s-ink2 f-mono" font-size="11">clip ε=0.2</text>
+        <text x="880" y="166" text-anchor="middle" class="s-ink2 f-mono" font-size="11">β = 0 (no ref)</text>
+        <text x="880" y="182" text-anchor="middle" class="s-ink2 f-mono" font-size="11">loss = dapo</text>
+        <!-- return arrow -->
+        <path d="M880 210 V262 H295 V236" class="st-acc" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+        <text x="590" y="280" text-anchor="middle" class="s-ink3 f-serif" font-size="12.5" font-style="italic">new weights → sample again. One optimizer step = 4 prompts × 8 completions in our defaults.</text>
+        <!-- zero-variance note -->
+        <rect x="430" y="10" width="350" height="56" rx="6" class="s-parts"/>
+        <text x="605" y="32" text-anchor="middle" class="s-ink f-disp" font-size="13">if all 8 rewards are equal → σ = 0 → no gradient</text>
+        <text x="605" y="52" text-anchor="middle" class="s-ink2 f-mono" font-size="11.5">TRL logs the share of such groups as frac_reward_zero_std</text>
+        <path d="M605 66 V84" class="st-part" stroke-width="1.4" fill="none" stroke-dasharray="3 3"/>
+      </svg>
+      <figcaption>The single most important diagnostic is the amber box: GRPO can only amplify successes that already occur. A group of eight zeros teaches nothing. TinyZero's "0.5B fails to learn" result is this regime.</figcaption>
+    </figure></div>
+  </section>
+
+  <!-- ============================ TWO TASKS ============================ -->
+  <section>
+    <h2>Two tasks, one machine</h2>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th><span class="badge">98</span> Countdown</th><th><span class="badge w">F/B</span> Wordmaze</th></tr></thead>
+      <tbody>
+        <tr><td>the puzzle</td><td><code>[44, 19, 35]</code> → <code>98</code> using each number once, <code>+ − × ÷</code></td><td><code>cold → warm</code> in exactly 4 one-letter moves whose directions spell <code>FFBF</code></td></tr>
+        <tr><td>model</td><td><code>Qwen/Qwen3.5-0.8B-Base</code>, no SFT, plain-text prompt</td><td><code>Qwen/Qwen3.5-4B</code> instruct, thinking on, LoRA r=32</td></tr>
+        <tr><td>why that model</td><td>the tweet's bet; TinyZero says 0.5B fails, 1.5B+ works — 0.8B on a 2026 base is the open question</td><td>only small model with a published non-zero baseline: 18.5 % (easy), 2.5 % (hard). 0.8B is ≈ 0 % → nothing to amplify</td></tr>
+        <tr><td>data</td><td>490,364 puzzles · 3 or 4 numbers · targets 10–100</td><td>2 × 2,000 puzzles · configs <code>m3-4</code> / <code>m4-6</code> · ~270 per (length, moves) bucket</td></tr>
+        <tr><td>reward</td><td>format <span class="pill part">0 / .5 / 1</span> + correct equation <span class="pill pass">0 / 1</span></td><td>format <span class="pill part">0.1</span> + real ladder <span class="pill part">0.3</span> + full solve <span class="pill pass">1.0</span> · strict dictionary</td></tr>
+        <tr><td>known failure</td><td>too-small model → all-zero groups</td><td>two-word shortcut <code>&lt;answer&gt;cold -&gt; warm&lt;/answer&gt;</code> passes loose checks</td></tr>
+        <tr><td>prior art</td><td>TinyZero (Jan 2025), Mini-R1 (Phil Schmid)</td><td>environment + baselines only; the training post is unwritten</td></tr>
+        <tr><td>first curve</td><td>one evening, A100</td><td>1–2 weeks; first week is measurement</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============================ COUNTDOWN REWARD ============================ -->
+  <section>
+    <h2><span class="badge">98</span> Countdown: what earns the reward</h2>
+    <div class="col"><p>Two functions, logged separately by TRL so you can see the format get learned before the arithmetic does. The <em>answer</em> reward is your solve rate.</p></div>
+    <div class="band"><figure>
+      <svg viewBox="0 0 940 330" role="img" aria-label="Countdown reward decision tree">
+        <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink-3)"/></marker></defs>
+        <!-- start -->
+        <rect x="10" y="130" width="150" height="60" rx="6" class="box" stroke-width="1.2"/>
+        <text x="85" y="156" text-anchor="middle" class="s-ink f-disp" font-size="13.5">completion text</text>
+        <text x="85" y="176" text-anchor="middle" class="s-ink3 f-mono" font-size="11">starts inside &lt;think&gt;</text>
+        <!-- format lane -->
+        <text x="230" y="60" class="s-ink3 f-mono" font-size="11.5" letter-spacing="1">FORMAT_REWARD</text>
+        <path d="M160 150 C 190 150, 190 100, 215 100" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+        <rect x="220" y="72" width="200" height="56" rx="6" class="box" stroke-width="1.2"/>
+        <text x="320" y="94" text-anchor="middle" class="s-ink f-serif" font-size="13">has <tspan class="f-mono">&lt;/think&gt;</tspan> then one</text>
+        <text x="320" y="114" text-anchor="middle" class="s-ink f-serif" font-size="13"><tspan class="f-mono">&lt;answer&gt;…&lt;/answer&gt;</tspan> ?</text>
+        <path d="M420 100 H460" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+        <rect x="465" y="72" width="180" height="56" rx="6" class="box" stroke-width="1.2"/>
+        <text x="555" y="94" text-anchor="middle" class="s-ink f-serif" font-size="13">nothing after</text>
+        <text x="555" y="114" text-anchor="middle" class="s-ink f-serif" font-size="13"><tspan class="f-mono">&lt;/answer&gt;</tspan> ?</text>
+        <path d="M645 92 H700" class="st-pass" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+        <rect x="705" y="66" width="90" height="26" rx="13" class="s-passs"/><text x="750" y="84" text-anchor="middle" class="s-pass f-mono" font-size="12.5" font-weight="600">1.0</text>
+        <text x="805" y="84" class="s-ink2 f-serif" font-size="12">yes → learned to stop</text>
+        <path d="M645 112 H700" class="st-part" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+        <rect x="705" y="100" width="90" height="26" rx="13" class="s-parts"/><text x="750" y="118" text-anchor="middle" class="s-part f-mono" font-size="12.5" font-weight="600">0.5</text>
+        <text x="805" y="118" class="s-ink2 f-serif" font-size="12">rambles on</text>
+        <path d="M320 128 V150 H700" class="st-fail" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+        <rect x="705" y="137" width="90" height="26" rx="13" class="s-fails"/><text x="750" y="155" text-anchor="middle" class="s-fail f-mono" font-size="12.5" font-weight="600">0</text>
+        <text x="805" y="155" class="s-ink2 f-serif" font-size="12">no / wrong order</text>
+        <!-- answer lane -->
+        <text x="230" y="205" class="s-ink3 f-mono" font-size="11.5" letter-spacing="1">ANSWER_REWARD</text>
+        <path d="M160 170 C 190 170, 190 245, 215 245" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+        <g class="f-serif" font-size="12.5">
+          <rect x="220" y="222" width="118" height="46" rx="6" class="box" stroke-width="1.2"/>
+          <text x="279" y="241" text-anchor="middle" class="s-ink">first <tspan class="f-mono" font-size="11">&lt;answer&gt;</tspan></text>
+          <text x="279" y="257" text-anchor="middle" class="s-ink">found?</text>
+          <path d="M338 245 H358" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+          <rect x="362" y="222" width="118" height="46" rx="6" class="box" stroke-width="1.2"/>
+          <text x="421" y="241" text-anchor="middle" class="s-ink">only digits</text>
+          <text x="421" y="257" text-anchor="middle" class="s-ink"><tspan class="f-mono" font-size="11">+ - * / ( ) .</tspan> no <tspan class="f-mono" font-size="11">**</tspan></text>
+          <path d="M480 245 H500" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+          <rect x="504" y="222" width="118" height="46" rx="6" class="box" stroke-width="1.2"/>
+          <text x="563" y="241" text-anchor="middle" class="s-ink">each given number</text>
+          <text x="563" y="257" text-anchor="middle" class="s-ink">exactly once?</text>
+          <path d="M622 245 H642" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+          <rect x="646" y="222" width="118" height="46" rx="6" class="box" stroke-width="1.2"/>
+          <text x="705" y="241" text-anchor="middle" class="s-ink"><tspan class="f-mono" font-size="11">eval</tspan> ≈ target</text>
+          <text x="705" y="257" text-anchor="middle" class="s-ink">within 1e-6?</text>
+          <path d="M764 245 H800" class="st-pass" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+          <rect x="805" y="232" width="90" height="26" rx="13" class="s-passs"/><text x="850" y="250" text-anchor="middle" class="s-pass f-mono" font-size="12.5" font-weight="600">1.0</text>
+          <!-- fail rail -->
+          <path d="M279 268 V300 H800" class="st-fail" stroke-width="1.3" fill="none" marker-end="url(#arr2)"/>
+          <path d="M421 268 V300" class="st-fail" stroke-width="1.3" fill="none"/>
+          <path d="M563 268 V300" class="st-fail" stroke-width="1.3" fill="none"/>
+          <path d="M705 268 V300" class="st-fail" stroke-width="1.3" fill="none"/>
+          <rect x="805" y="287" width="90" height="26" rx="13" class="s-fails"/><text x="850" y="305" text-anchor="middle" class="s-fail f-mono" font-size="12.5" font-weight="600">0</text>
+          <text x="440" y="320" text-anchor="middle" class="s-ink3" font-size="11.5" font-style="italic">any "no" → 0. This is TinyZero's compute_score with the exact-once check and Mini-R1's character filter.</text>
+        </g>
+      </svg>
+      <figcaption>Max total 2.0. The "nothing after &lt;/answer&gt;" split is deliberate: a base model has no reason to emit EOS, and rewarding the clean stop shortens generations over training — watch <code>completions/mean_length</code> dip before it rises.</figcaption>
+    </figure></div>
+  </section>
+
+  <!-- ============================ WORDMAZE FUNNEL ============================ -->
+  <section>
+    <h2><span class="badge w">F/B</span> Wordmaze: ten checks, and where the reward attaches</h2>
+    <div class="col"><p>The verifier returns ten booleans. Most are free — every model passes them. Two are hard, and both are about <em>letters</em>, which a tokenizer hides. The reward is attached so that the known hack earns almost nothing and a real ladder earns something.</p></div>
+    <div class="band"><figure>
+      <svg viewBox="0 0 940 400" role="img" aria-label="Wordmaze verifier checks ordered from free to hard, with reward attachments and the two-word hack path">
+        <g class="f-mono" font-size="12.5">
+          <!-- header labels -->
+          <text x="20" y="22" class="s-ink3" font-size="11" letter-spacing="1">CHECK</text>
+          <text x="330" y="22" class="s-ink3" font-size="11" letter-spacing="1">DIFFICULTY</text>
+          <text x="470" y="22" class="s-ink3" font-size="11" letter-spacing="1">THE HACK: cold -&gt; warm</text>
+          <text x="760" y="22" class="s-ink3" font-size="11" letter-spacing="1">REWARD</text>
+          <!-- rows -->
+          <g>
+            <rect x="10" y="34" width="300" height="26" rx="4" class="s-passs"/><text x="20" y="52" class="s-ink">valid_format</text>
+            <text x="330" y="52" class="s-pass">free</text><text x="470" y="52" class="s-pass">✓</text>
+          </g>
+          <g>
+            <rect x="10" y="64" width="300" height="26" rx="4" class="s-passs"/><text x="20" y="82" class="s-ink">starts_correctly · reaches_goal</text>
+            <text x="330" y="82" class="s-pass">free</text><text x="470" y="82" class="s-pass">✓</text>
+          </g>
+          <g>
+            <rect x="10" y="94" width="300" height="26" rx="4" class="s-passs"/><text x="20" y="112" class="s-ink">within_max_moves</text>
+            <text x="330" y="112" class="s-pass">free</text><text x="470" y="112" class="s-pass">✓  (1 ≤ 4)</text>
+          </g>
+          <g>
+            <rect x="10" y="124" width="300" height="26" rx="4" class="s-parts"/><text x="20" y="142" class="s-ink">exact_moves</text>
+            <text x="330" y="142" class="s-part">easy</text><text x="470" y="142" class="s-fail">✗  1 ≠ 4</text>
+          </g>
+          <g>
+            <rect x="10" y="154" width="300" height="26" rx="4" class="s-parts"/><text x="20" y="172" class="s-ink">correct_word_length</text>
+            <text x="330" y="172" class="s-part">easy</text><text x="470" y="172" class="s-pass">✓</text>
+          </g>
+          <g>
+            <rect x="10" y="184" width="300" height="26" rx="4" class="s-parts"/><text x="20" y="202" class="s-ink">all_valid_words</text>
+            <text x="330" y="202" class="s-part">medium</text><text x="470" y="202" class="s-pass">✓  even "zzzz" passes the lenient list</text>
+          </g>
+          <g>
+            <rect x="10" y="214" width="300" height="26" rx="4" class="s-fails"/><text x="20" y="232" class="s-ink" font-weight="600">one_letter_changes</text>
+            <text x="330" y="232" class="s-fail" font-weight="600">hard</text><text x="470" y="232" class="s-fail">✗  four letters change at once</text>
+          </g>
+          <g>
+            <rect x="10" y="244" width="300" height="26" rx="4" class="s-fails"/><text x="20" y="262" class="s-ink" font-weight="600">password_matches</text>
+            <text x="330" y="262" class="s-fail" font-weight="600">hard</text><text x="470" y="262" class="s-fail">✗  cannot even be computed</text>
+          </g>
+          <g>
+            <rect x="10" y="274" width="300" height="26" rx="4" class="box" stroke-width="1.2"/><text x="20" y="292" class="s-ink f-disp" font-size="13">fully_valid = all of the above</text>
+            <text x="470" y="292" class="s-fail" font-weight="600">✗</text>
+          </g>
+          <!-- reward brackets -->
+          <path d="M745 40 V60" class="st-part" stroke-width="2" fill="none"/>
+          <rect x="758" y="38" width="54" height="24" rx="12" class="s-parts"/><text x="785" y="55" text-anchor="middle" class="s-part" font-weight="600">0.1</text>
+          <text x="820" y="55" class="s-ink2 f-serif" font-size="12">format — near-free</text>
+          <path d="M745 130 V270" class="st-part" stroke-width="2" fill="none"/>
+          <path d="M745 130 H752 M745 270 H752" class="st-part" stroke-width="2" fill="none"/>
+          <rect x="758" y="188" width="54" height="24" rx="12" class="s-parts"/><text x="785" y="205" text-anchor="middle" class="s-part" font-weight="600">0.3</text>
+          <text x="820" y="196" class="s-ink2 f-serif" font-size="12">real ladder,</text>
+          <text x="820" y="210" class="s-ink2 f-serif" font-size="12">exact moves,</text>
+          <text x="820" y="224" class="s-ink2 f-serif" font-size="12">password ignored</text>
+          <path d="M745 280 V296" class="st-pass" stroke-width="2" fill="none"/>
+          <rect x="758" y="276" width="54" height="24" rx="12" class="s-passs"/><text x="785" y="293" text-anchor="middle" class="s-pass" font-weight="600">1.0</text>
+          <text x="820" y="293" class="s-ink2 f-serif" font-size="12">full solve</text>
+          <!-- totals -->
+          <text x="20" y="334" class="s-ink f-disp" font-size="13.5">Totals:</text>
+          <text x="90" y="334" class="s-pass">correct solve 1.4</text>
+          <text x="260" y="334" class="s-part">valid ladder, wrong password 0.4</text>
+          <text x="560" y="334" class="s-fail">the hack 0.1</text>
+          <text x="680" y="334" class="s-ink3">no answer / unfinished thought 0.0</text>
+          <text x="20" y="362" class="s-ink2 f-serif" font-size="12.5" font-style="italic">The password has one letter per move, so password_matches already implies exact_moves — the shortcut can never satisfy it.</text>
+          <text x="20" y="384" class="s-ink2 f-serif" font-size="12.5" font-style="italic">Only the first &lt;answer&gt; after the last &lt;/think&gt; counts; an unfinished thought scores 0, so answers can't hide inside the thinking.</text>
+        </g>
+      </svg>
+      <figcaption>Colour = how often models pass the check in the author's baselines: green ≈ everyone, amber ≈ most, red = "the puzzle lives here" (Gemini 2.5 Flash matched the password only 44 % of the time). The reward pays for the amber-and-red band as a unit and for the whole thing — never for green alone.</figcaption>
+    </figure></div>
+  </section>
+
+  <!-- ============================ EXPECTED CURVES ============================ -->
+  <section>
+    <h2>What the curves should look like</h2>
+    <div class="col"><p>Schematic, not data. The three shapes to recognise, with the only published reference points for this task (Mini-R1: Qwen2.5-<strong>3B-Instruct</strong>, 8 generations, 4×H100). A 0.8B base will be slower and noisier — that difference is your result.</p></div>
+    <div class="band"><figure>
+      <svg viewBox="0 0 940 320" role="img" aria-label="Schematic training curves: format reward rises early, solve rate rises later as an S-curve, completion length dips then grows">
+        <g class="f-mono" font-size="11.5">
+          <!-- axes -->
+          <line x1="60" y1="20" x2="60" y2="250" class="st-ink3" stroke-width="1"/>
+          <line x1="60" y1="250" x2="900" y2="250" class="st-ink3" stroke-width="1"/>
+          <text x="60" y="272" text-anchor="middle" class="s-ink3">0</text>
+          <text x="247" y="272" text-anchor="middle" class="s-ink3">100</text>
+          <text x="434" y="272" text-anchor="middle" class="s-ink3">200</text>
+          <text x="621" y="272" text-anchor="middle" class="s-ink3">300</text>
+          <text x="808" y="272" text-anchor="middle" class="s-ink3">400</text>
+          <text x="480" y="296" text-anchor="middle" class="s-ink2 f-serif" font-size="13">optimizer steps</text>
+          <text x="48" y="254" text-anchor="end" class="s-ink3">0</text>
+          <text x="48" y="139" text-anchor="end" class="s-ink3">0.5</text>
+          <text x="48" y="28" text-anchor="end" class="s-ink3">1.0</text>
+          <line x1="60" y1="135" x2="900" y2="135" class="st-ink3" stroke-width=".5" stroke-dasharray="2 4"/>
+          <!-- format reward: fast rise to ~0.95 by step 50 -->
+          <path d="M60 205 C 90 200, 110 90, 153 45 C 200 32, 400 30, 900 28" fill="none" class="st-part" stroke-width="2.4"/>
+          <text x="180" y="40" class="s-part" font-weight="600">rewards/format_reward/mean</text>
+          <!-- solve rate: S-curve 0.04 -> ~0.5 -->
+          <path d="M60 241 C 150 238, 200 215, 247 192 C 330 150, 380 145, 434 158 C 500 175, 560 150, 620 142 C 700 132, 800 128, 900 126" fill="none" class="st-pass" stroke-width="2.4"/>
+          <text x="560" y="212" class="s-pass" font-weight="600">rewards/answer_reward/mean (solve rate)</text>
+          <!-- length: dip then rise (secondary axis, unlabeled scale) -->
+          <path d="M60 120 C 120 150, 160 190, 220 188 C 320 184, 400 160, 480 140 C 600 112, 750 98, 900 92" fill="none" class="st-acc" stroke-width="2" stroke-dasharray="6 4"/>
+          <text x="440" y="104" class="s-acc" font-weight="600">completions/mean_length (own scale)</text>
+          <!-- reference points -->
+          <circle cx="153" cy="45" r="4" class="s-part"/><text x="153" y="66" text-anchor="middle" class="s-ink2">step 50: format learned</text>
+          <circle cx="247" cy="192" r="4" class="s-pass"/><text x="247" y="215" text-anchor="middle" class="s-ink2">100: ~25 %</text>
+          <circle cx="434" cy="158" r="4" class="s-pass"/><text x="434" y="182" text-anchor="middle" class="s-ink2">200: ~40 % · shift to enumeration</text>
+          <circle cx="900" cy="126" r="4" class="s-pass"/><text x="892" y="150" text-anchor="end" class="s-ink2">450: ~50 %</text>
+          <!-- dip annotation -->
+          <text x="205" y="172" text-anchor="middle" class="s-acc" font-size="11">stops rambling</text>
+          <text x="800" y="76" text-anchor="middle" class="s-acc" font-size="11">more verification per answer</text>
+        </g>
+      </svg>
+      <figcaption>Reference points from Phil Schmid's Mini-R1 write-up (Jan 2025) on this exact dataset. The dashed line is the R1-paper "aha" shape: length falls while the model learns to stop, then grows as it learns to check its work. If <code>frac_reward_zero_std</code> is still near 1.0 at step 50, none of this will happen — go to the decision flow.</figcaption>
+    </figure></div>
+  </section>
+
+  <!-- ============================ DECISION FLOW ============================ -->
+  <section>
+    <h2>Go / no-go before you spend a GPU-night</h2>
+    <div class="col"><p>Ten minutes of sampling from the untrained model tells you whether the tweet's bet holds for <em>your</em> model size. Same logic for both tasks; the thresholds differ.</p></div>
+    <div class="band"><figure>
+      <svg viewBox="0 0 940 300" role="img" aria-label="Decision flow from baseline evaluation to training configuration">
+        <defs><marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink-3)"/></marker></defs>
+        <g class="f-serif" font-size="13">
+          <rect x="10" y="110" width="240" height="80" rx="6" class="s-accs"/>
+          <rect x="10" y="110" width="240" height="80" rx="6" fill="none" class="st-acc" stroke-width="1.2"/>
+          <text x="130" y="136" text-anchor="middle" class="s-ink f-disp" font-size="14">baseline eval</text>
+          <text x="130" y="156" text-anchor="middle" class="s-ink2 f-mono" font-size="11">Countdown: pass@8, 200 puzzles</text>
+          <text x="130" y="174" text-anchor="middle" class="s-ink2 f-mono" font-size="11">Wordmaze: fully_valid, 4×3 bucket</text>
+          <!-- branches -->
+          <path d="M250 130 C 265 130, 265 50, 280 50" class="st-pass" stroke-width="1.5" fill="none" marker-end="url(#arr3)"/>
+          <path d="M250 150 H280" class="st-part" stroke-width="1.5" fill="none" marker-end="url(#arr3)"/>
+          <path d="M250 170 C 265 170, 265 250, 280 250" class="st-fail" stroke-width="1.5" fill="none" marker-end="url(#arr3)"/>
+          <!-- green -->
+          <rect x="285" y="22" width="200" height="56" rx="6" class="s-passs"/>
+          <text x="385" y="45" text-anchor="middle" class="s-ink f-disp" font-size="13.5">≥ 5 % · (Wordmaze ≥ 10 %)</text>
+          <text x="385" y="65" text-anchor="middle" class="s-ink2" font-size="12.5">plenty of groups with a success</text>
+          <path d="M485 50 H525" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr3)"/>
+          <rect x="530" y="22" width="390" height="56" rx="6" class="box" stroke-width="1.2"/>
+          <text x="725" y="45" text-anchor="middle" class="s-ink f-mono" font-size="12">train_*_grpo.py  (defaults, full mix)</text>
+          <text x="725" y="65" text-anchor="middle" class="s-ink2" font-size="12.5">400 steps · watch frac_reward_zero_std fall</text>
+          <!-- amber -->
+          <rect x="285" y="122" width="200" height="56" rx="6" class="s-parts"/>
+          <text x="385" y="145" text-anchor="middle" class="s-ink f-disp" font-size="13.5">1–5 % · (Wordmaze 3–10 %)</text>
+          <text x="385" y="165" text-anchor="middle" class="s-ink2" font-size="12.5">thin signal, most groups dead</text>
+          <path d="M485 150 H525" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr3)"/>
+          <rect x="530" y="122" width="390" height="56" rx="6" class="box" stroke-width="1.2"/>
+          <text x="725" y="145" text-anchor="middle" class="s-ink f-mono" font-size="11.5">--curriculum 3only  /  --word_lengths 4 --move_counts 3</text>
+          <text x="725" y="165" text-anchor="middle" class="s-ink2" font-size="12.5">easy subset first, then widen with --resume; or --num_generations 16</text>
+          <!-- red -->
+          <rect x="285" y="222" width="200" height="56" rx="6" class="s-fails"/>
+          <text x="385" y="245" text-anchor="middle" class="s-ink f-disp" font-size="13.5">≈ 0 %</text>
+          <text x="385" y="265" text-anchor="middle" class="s-ink2" font-size="12.5">nothing to amplify — do not train yet</text>
+          <path d="M485 250 H525" class="st-ink3" stroke-width="1.3" fill="none" marker-end="url(#arr3)"/>
+          <rect x="530" y="222" width="390" height="56" rx="6" class="box" stroke-width="1.2"/>
+          <text x="725" y="245" text-anchor="middle" class="s-ink f-mono" font-size="11.5">bigger base (2B) · instruct variant · --spaced (Wordmaze)</text>
+          <text x="725" y="265" text-anchor="middle" class="s-ink2" font-size="12.5">or write up the negative result — it is one</text>
+        </g>
+      </svg>
+      <figcaption>The eval scripts write <code>results/&lt;tag&gt;.json</code>; the number to read is <code>pass@8</code> (Countdown) or <code>rates.fully_valid</code> (Wordmaze). The baseline table itself is publishable — for Wordmaze it extends the author's table with rows he didn't run.</figcaption>
+    </figure></div>
+  </section>
+
+  <!-- ============================ GOTCHAS ============================ -->
+  <section class="col">
+    <h2>Five things about Qwen3.5 the tweet leaves out</h2>
+    <dl>
+      <dt>It's a vision-language checkpoint.</dt>
+      <dd><code>architectures: ["Qwen3_5ForConditionalGeneration"]</code>. Load with <code>AutoModelForCausalLM</code> → transformers gives you the text-only <code>Qwen3_5ForCausalLM</code>. Pass the model <em>name</em> to <code>GRPOTrainer</code> instead and TRL loads the full VLM with a processor — in float32.</dd>
+      <dt>18 of 24 layers are Gated DeltaNet.</dt>
+      <dd>Without <code>pip install flash-linear-attention</code> transformers silently falls back to a slow PyTorch path — and 5.16 prints no warning, so check: <code>python -c "from fla.ops.gated_delta_rule import chunk_gated_delta_rule"</code>. The second kernel, <code>causal-conv1d</code>, is a width-4 depthwise conv; it falls back independently and cheaply, so skip it if its build fails (or use <code>pip install kernels</code> + <code>use_kernels=True</code>).</dd>
+      <dt>The vLLM fast path was broken for this exact setup until August.</dt>
+      <dd>TRL #5269 / vLLM #36275: no text-only Qwen3.5 class in vLLM, so weight sync failed. Fixed in vLLM 0.27.0 (merged 2026-07-29); TRL 1.12 accepts ≤ 0.27.1. Scripts default to <code>use_vllm=False</code>; add <code>--use_vllm</code> once the slow path works.</dd>
+      <dt>248,320-token vocabulary.</dt>
+      <dd>The logits tensor at the loss step — batch × completion length × vocab — is the memory hog, not the 0.8B of weights. Halve <code>per_device_train_batch_size</code> before reaching for LoRA.</dd>
+      <dt><code>&lt;think&gt;</code> is a real token but not a "special" one.</dt>
+      <dd>So it survives TRL's <code>skip_special_tokens=True</code> decode and format rewards can see it. Base EOS is <code>&lt;|endoftext|&gt;</code>; the instruct template opens <code>&lt;think&gt;</code> by default and only pre-closes it with <code>enable_thinking=False</code>.</dd>
+    </dl>
+  </section>
+
+  <!-- ============================ PLAN ============================ -->
+  <section class="col">
+    <h2>Order of work</h2>
+    <ol class="plan">
+      <li><b>Countdown, baseline.</b> <code>eval_countdown.py --sample --k 8</code>. Ten minutes. Decide the branch above.</li>
+      <li><b>Countdown, train.</b> One A100 evening. First five steps: <code>step_time</code>, <code>fla</code> import check passed, <code>frac_reward_zero_std</code> below 1.</li>
+      <li><b>Countdown, after + write-up.</b> Same 500 puzzles. Plot, 5 samples, ablation: 0.8B vs 2B on one chart. Thread; tag @TheGlobalMinima and @jiayi_pirate.</li>
+      <li><b>Wordmaze, baseline table.</b> 0.8B / 2B / 4B × plain / spaced, per-check rates. Already a figure the author doesn't have.</li>
+      <li><b>Wordmaze, the hacking receipt.</b> 100 steps with a deliberately naive reward, then 100 with the shaped one. Two curves, one figure — the most shareable artefact here.</li>
+      <li><b>Wordmaze, train + generalise.</b> Train on 4-letter/3-move, evaluate on 5×3 and 4×4. Skill or memorisation? Publish; offer the verifier as a PR to the dataset repo.</li>
+    </ol>
+    <p class="small">Compute is Colab Pro. Measure five steps before trusting any time estimate; the guides mark every estimate as such.</p>
+  </section>
+
+  <hr>
+  <footer class="col small">
+    <div class="eyebrow">Sources, all read 2026-09-07</div>
+    <p>Tweet: x.com/TheGlobalMinima/status/2096532361844609320 · TinyZero: github.com/Jiayi-Pan/TinyZero · Mini-R1: philschmid.de/mini-deepseek-r1 · Wordmaze: dipkumar.dev/posts/llm/wordmaze and huggingface.co/datasets/immortal3/wordmaze · Models: huggingface.co/Qwen/Qwen3.5-0.8B-Base, Qwen3.5-4B · TRL GRPO docs and <code>GRPOConfig</code> defaults from trl 1.12.0 · TRL #5269, vLLM #36275 · transformers Qwen3.5 model page. Code, decision tables and full source list: <code>Learning ML/grpo_puzzles/</code>.</p>
+  </footer>
+</div>
+
+</body>
+</html>

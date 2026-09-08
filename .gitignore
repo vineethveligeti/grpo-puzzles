@@ -1,0 +1,18 @@
+# training outputs
+runs/
+results/
+wandb/
+*.safetensors
+*.bin
+*.pt
+checkpoint-*/
+
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+# secrets
+.env
+*.token

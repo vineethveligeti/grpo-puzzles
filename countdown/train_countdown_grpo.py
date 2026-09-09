@@ -29,6 +29,9 @@ from __future__ import annotations
 import argparse
 import os
 
+# Reduce allocator fragmentation (a 40 GB A100 lost 6 GB to "reserved but unallocated" in the vLLM-colocated run).
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from trl import GRPOConfig, GRPOTrainer
@@ -62,7 +65,9 @@ def parse_args():
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--lora", action="store_true", help="LoRA r=32 on all linear layers instead of full FT")
     p.add_argument("--use_vllm", action="store_true", help="colocated vLLM generation (needs vllm>=0.27, see GUIDE)")
-    p.add_argument("--vllm_gpu_memory_utilization", type=float, default=0.25)
+    p.add_argument("--vllm_gpu_memory_utilization", type=float, default=0.35)
+    p.add_argument("--no_vllm_sleep", action="store_true",
+                   help="keep vLLM resident during the train phase (default: sleep mode frees its KV cache + weights between generations so the trainer gets the whole GPU)")
     p.add_argument("--report_to", default="none", help="'wandb' or 'none'")
     p.add_argument("--save_steps", type=int, default=100)
     p.add_argument("--seed", type=int, default=42)
@@ -126,6 +131,7 @@ def main():
         use_vllm=a.use_vllm,
         vllm_mode="colocate",
         vllm_gpu_memory_utilization=a.vllm_gpu_memory_utilization,
+        vllm_enable_sleep_mode=a.use_vllm and not a.no_vllm_sleep,
         # --- logging / saving ---
         logging_steps=1,
         log_completions=True,

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Drive the Countdown GRPO run through the official Colab CLI (no browser).
-#   ./colab_cli.sh setup            # new A100 session + deps + upload the 4 .py files
+#   ./colab_cli.sh setup            # new A100 session + upload code + setup_vm.sh (deps, vllm, text-only ckpt) in background
+#   ./colab_cli.sh setuplog         # tail of setup.log (ends with SETUP_OK)
+#   ./colab_cli.sh sync             # re-upload code files
 #   ./colab_cli.sh train [ARGS...]  # launch train_countdown_grpo.py in the background on the VM (nohup, log file)
 #   ./colab_cli.sh tail [N]         # last N lines of the training log
 #   ./colab_cli.sh metrics          # parsed per-step metrics from the log
@@ -22,14 +24,21 @@ LOG=$REMOTE/train.log
 x() { "$COLAB" exec -s "$SESSION" --timeout "${EXEC_TIMEOUT:-600}"; }   # piped python -> kernel (default 30 s idle timeout is too short)
 
 case "${1:-}" in
-  setup)
+  setup)   # new A100 + upload code + run setup_vm.sh in the background (poll with: ./colab_cli.sh setuplog)
     "$COLAB" new -s "$SESSION" --gpu A100
-    "$COLAB" install -s "$SESSION" "trl>=1.11" "transformers>=5.2" datasets peft accelerate wandb matplotlib flash-linear-attention huggingface_hub
     echo "import os; os.makedirs('$REMOTE', exist_ok=True)" | x
-    for f in data.py rewards.py train_countdown_grpo.py eval_countdown.py; do
+    for f in data.py rewards.py train_countdown_grpo.py eval_countdown.py make_text_only_ckpt.py setup_vm.sh; do
       "$COLAB" upload -s "$SESSION" "$HERE/$f" "$REMOTE/$f"
     done
-    echo "import subprocess; print(subprocess.run('cd $REMOTE && nvidia-smi --query-gpu=name,memory.total --format=csv && python -c \"from fla.ops.gated_delta_rule import chunk_gated_delta_rule; print(\\'fla OK\\')\" && python rewards.py | tail -1', shell=True, capture_output=True, text=True).stdout)" | x
+    echo "import subprocess; subprocess.Popen('bash $REMOTE/setup_vm.sh', shell=True); print('setup started -> $REMOTE/setup.log')" | x
+    ;;
+  setuplog)
+    echo "import os; p='$REMOTE/setup.log'; print(open(p).read()[-3000:] if os.path.exists(p) else 'no setup.log yet')" | x
+    ;;
+  sync)    # re-upload the code files only
+    for f in data.py rewards.py train_countdown_grpo.py eval_countdown.py make_text_only_ckpt.py setup_vm.sh; do
+      "$COLAB" upload -s "$SESSION" "$HERE/$f" "$REMOTE/$f"
+    done
     ;;
   train)
     shift

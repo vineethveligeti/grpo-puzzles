@@ -7,7 +7,8 @@
 #   ./colab_cli.sh eval [ARGS...]   # run eval_countdown.py (foreground, streams)
 #   ./colab_cli.sh fetch            # download results/ + curves + trainer_state to ./colab_out/
 #   ./colab_cli.sh stop
-# Env: SESSION (default cd-a100), COLAB (default ~/.local/bin/colab).
+# Env: SESSION (default cd-a100), COLAB (default ~/.local/bin/colab), EXEC_TIMEOUT (s, default 600).
+# Known CLI bug (0.6.0): needs  uv tool install --force google-colab-cli --with "jupyter-kernel-client<1"
 # Kernel state persists across `colab exec` calls, so setting WANDB_API_KEY/HF_TOKEN once via
 #   echo "import os; os.environ['WANDB_API_KEY']='...'; os.environ['HF_TOKEN']='...'" | colab exec -s cd-a100
 # is inherited by the training subprocess launched later.
@@ -18,7 +19,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 REMOTE=/content/countdown
 LOG=$REMOTE/train.log
 
-x() { "$COLAB" exec -s "$SESSION"; }          # piped python -> kernel
+x() { "$COLAB" exec -s "$SESSION" --timeout "${EXEC_TIMEOUT:-600}"; }   # piped python -> kernel (default 30 s idle timeout is too short)
 
 case "${1:-}" in
   setup)

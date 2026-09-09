@@ -54,7 +54,14 @@ Raw vLLM decode on the text-only checkpoint: 512 completions, 487k tokens in 31.
 Fixes needed to get there (all in the repo now): `make_text_only_ckpt.py` (TRL #5269 workaround), `pip uninstall torchaudio torchcodec`
 after the vllm install, `vllm_enable_sleep_mode=True` (0.45 util without sleep OOMed in the step-2 backward), `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
 
-**Main run launched 2026-09-08 ~21:30 PT on CLI session `cd-a100`** (`train_run.sh`): 3only, len 1024, 16 gens/prompt, 512 per
+**Colab reclaims CLI-created A100 VMs after exactly 60 min** (seen twice, 2026-09-08; keep-alive daemon healthy, 75 compute
+units left; the browser-created runtime lived >2 h). Run #2 died at step 53 with its checkpoint. Mitigation, now in place:
+`--hub_repo aang2/qwen3.5-0.8b-countdown-grpo` (private; every 50-step checkpoint pushed to `last-checkpoint/`) +
+`--resume auto` + `supervise.sh` on the Mac (recreates the session, re-runs `setup_vm.sh`, pushes tokens from `~/.zshrc`,
+relaunches; W&B run id `cd08b-3only-g16-vllm` with `WANDB_RESUME=allow` so the curve continues across VMs).
+Run #3 started 2026-09-08 22:20 PT under `caffeinate`; log: `countdown/supervise.log`.
+
+**Main run #2 launched 2026-09-08 ~21:30 PT on CLI session `cd-a100`** (died at step 53, see above) (`train_run.sh`): 3only, len 1024, 16 gens/prompt, 512 per
 generation, 128 per optimizer step, 400 steps, vLLM, W&B *offline* (`cd-0.8b-base-3only-g16-vllm`; sync with `wandb sync` once
 `WANDB_API_KEY` is set in the kernel). Expected ~3.5 h. Log: `/content/countdown/train.log`; checkpoints every 50 steps.
 

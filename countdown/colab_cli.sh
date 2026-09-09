@@ -10,6 +10,7 @@
 #   ./colab_cli.sh metrics          # parsed per-step metrics from the log
 #   ./colab_cli.sh eval [ARGS...]   # run eval_countdown.py (foreground, streams)
 #   ./colab_cli.sh fetch            # download results/ + curves + trainer_state to ./colab_out/
+#   ./colab_cli.sh tokens           # push WANDB_API_KEY/HF_TOKEN from your local env (~/.zshrc) into the kernel
 #   ./colab_cli.sh stop
 # Env: SESSION (default cd-a100), COLAB (default ~/.local/bin/colab), EXEC_TIMEOUT (s, default 600).
 # Known CLI bug (0.6.0): needs  uv tool install --force google-colab-cli --with "jupyter-kernel-client<1"
@@ -70,6 +71,11 @@ for l in open('$LOG'):
   vllm)   # optional: fast generation. Check torch/fla survive the install before using --use_vllm.
     "$COLAB" install -s "$SESSION" "vllm==0.27.1"
     echo "import subprocess; print(subprocess.run('python -c \"import torch, vllm; print(torch.__version__, torch.cuda.is_available(), vllm.__version__); from fla.ops.gated_delta_rule import chunk_gated_delta_rule; print(\'fla OK\')\"', shell=True, capture_output=True, text=True))" | x
+    ;;
+  tokens)  # push WANDB_API_KEY / HF_TOKEN from the LOCAL shell env into the kernel (put `export WANDB_API_KEY=...` in ~/.zshrc once)
+    [ -n "${WANDB_API_KEY:-}" ] || echo "warning: WANDB_API_KEY not set locally"
+    [ -n "${HF_TOKEN:-}" ] || echo "warning: HF_TOKEN not set locally"
+    echo "import os; os.environ.update({k:v for k,v in {'WANDB_API_KEY':'${WANDB_API_KEY:-}','HF_TOKEN':'${HF_TOKEN:-}','WANDB_PROJECT':'grpo-countdown'}.items() if v}); print({k:(k in os.environ) for k in ('WANDB_API_KEY','HF_TOKEN')})" | x
     ;;
   py)     # arbitrary python in the kernel:  ./colab_cli.sh py "print(1)"
     shift; echo "$*" | x ;;

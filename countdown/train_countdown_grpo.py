@@ -60,6 +60,10 @@ def parse_args():
                         "(per_device_train_batch_size * grad_accum). Decoding a 0.8B model is launch-bound, "
                         "so 128 costs barely more wall-clock than 32 -> ~3-4x faster steps. Must be a "
                         "multiple of per_device_train_batch_size and of num_generations.")
+    p.add_argument("--liger", action="store_true",
+                   help="TRL use_liger_loss: fused GRPO loss that never materialises the 248k-vocab logits (needs liger-kernel)")
+    p.add_argument("--epsilon_high", type=float, default=None,
+                   help="DAPO clip-higher: upper PPO clip (e.g. 0.28); default = symmetric 0.2. Fights entropy collapse")
     p.add_argument("--no_grad_ckpt", action="store_true",
                    help="disable gradient checkpointing (saves the recompute forward; fits on 40 GB at batch 4)")
     p.add_argument("--temperature", type=float, default=1.0)
@@ -155,6 +159,8 @@ def main():
         temperature=a.temperature,
         beta=a.beta,
         loss_type="dapo",
+        epsilon_high=a.epsilon_high,
+        use_liger_loss=a.liger,
         scale_rewards="group",
         # --- generation backend ---
         use_vllm=a.use_vllm,

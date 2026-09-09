@@ -102,17 +102,19 @@ for s in json.load(open("results/base-greedy.json"))["samples"][:3]:
     md("""## Step 4a — 5-step timing run (~5 min). Tells you the real seconds/step before you commit to 400.
 Also check `frac_reward_zero_std` in the log: it must be clearly below 1.0 or GRPO has no gradient."""),
 
-    code("""import time
-CURRICULUM = "none"          # set from the decision above: "none" | "3only"
-t0 = time.time()
-!python train_countdown_grpo.py --output_dir runs/timing --max_steps 5 --save_steps 1000 --report_to none --curriculum $CURRICULUM
-print(f"\\n~{(time.time()-t0)/5:.0f} s/step incl. model load  ->  400 steps ≈ {(time.time()-t0)/5*400/3600:.1f} h (upper bound)")"""),
+    code("""import time; t0 = time.time()
+CURRICULUM = "3only"     # from the decision above: "none" | "3only"   (2026-09-08 baseline: pass@8 = 2.5% -> 3only)
+MAXLEN = 1024            # 512 clipped 98% of base completions, 1024 still clips ~90%; terminated ones average ~680 tokens
+# batch 8 x 1024 tokens OOMs on the A100-40GB in the fla backward -> 4 x 8 (same 32 completions/step)
+!python train_countdown_grpo.py --output_dir runs/timing --max_steps 5 --save_steps 1000 --report_to none --curriculum $CURRICULUM --max_completion_length $MAXLEN --per_device_train_batch_size 4 --grad_accum 8
+print(f"{(time.time()-t0)/5:.0f} s/step incl. model load; 400 steps <= {(time.time()-t0)/5*400/3600:.1f} h")"""),
 
     md("""## Step 4b — train (a few hours). First 5 steps in the log: `frac_reward_zero_std`, `rewards/answer_reward/mean`.
-L4 24 GB: add `--per_device_train_batch_size 4 --grad_accum 8` (same 32 completions/step) or `--lora --lr 2e-5`."""),
+Batch 4 × accum 8 is already the A100 setting at 1024 tokens; on an L4 use `--lora --lr 2e-5` or `--max_completion_length 512`."""),
 
-    code("""RUN_DIR = "runs/countdown-qwen3.5-0.8b-base"
-!python train_countdown_grpo.py --output_dir $RUN_DIR --max_steps 400 --report_to $REPORT_TO --run_name cd-0.8b-base --curriculum $CURRICULUM"""),
+    code("""import os; os.environ["WANDB_PROJECT"] = "grpo-countdown"
+RUN_DIR = "runs/countdown-qwen3.5-0.8b-base"
+!python train_countdown_grpo.py --output_dir $RUN_DIR --max_steps 400 --report_to $REPORT_TO --run_name cd-0.8b-base-3only-len1024 --curriculum $CURRICULUM --max_completion_length $MAXLEN --per_device_train_batch_size 4 --grad_accum 8 --save_steps 50"""),
 
     md("## Step 5 — curves (from the checkpoint's `trainer_state.json`; W&B has the full set)"),
 

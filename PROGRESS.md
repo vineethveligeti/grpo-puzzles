@@ -8,7 +8,7 @@ Source of truth for where this project stands. Update after every GPU run.
 |---|---|---|
 | code | done, CPU smoke-tested | done, CPU smoke-tested |
 | baseline eval on GPU | **done 2026-09-08** (see below) | **not run** |
-| training run | **running** since 2026-09-08 ~18:00 PT: 3only, len 1024, 400 steps, W&B project `grpo-countdown` run `cd-0.8b-base-3only-len1024` | not started |
+| training run | **running** since 2026-09-08 ~21:30 PT (2nd attempt, vLLM): `cd-0.8b-base-3only-g16-vllm`, see below. 1st attempt (HF generate, 8 gens) stopped at step 32 | not started |
 | write-up / thread | — | — |
 
 Environment on Colab (2026-09-08): `trl`, `transformers`, `datasets`, `peft`, `accelerate`, `wandb`,
@@ -48,6 +48,15 @@ GPU-utilisation work (2026-09-08 evening, via the Colab CLI session `cd-a100`):
 |---|---|---|---|
 | HF generate, 32 per call, 32/step (browser run, 32 steps done then interrupted) | 52 s | — | 52 s |
 | HF generate, 512 per call, 16 gens/prompt, 128/step | 313 s | 15 s ×3 | 22 s |
+| **vLLM colocated (sleep mode, util 0.35), 512 per call, 16 gens, 128/step** | 201 s (incl. vLLM start) / **78 s** steady | 15 s ×3 | **7.7 s** |
+
+Raw vLLM decode on the text-only checkpoint: 512 completions, 487k tokens in 31.7 s = **15.4k tok/s** (HF generate: ~1.6k).
+Fixes needed to get there (all in the repo now): `make_text_only_ckpt.py` (TRL #5269 workaround), `pip uninstall torchaudio torchcodec`
+after the vllm install, `vllm_enable_sleep_mode=True` (0.45 util without sleep OOMed in the step-2 backward), `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`.
+
+**Main run launched 2026-09-08 ~21:30 PT on CLI session `cd-a100`** (`train_run.sh`): 3only, len 1024, 16 gens/prompt, 512 per
+generation, 128 per optimizer step, 400 steps, vLLM, W&B *offline* (`cd-0.8b-base-3only-g16-vllm`; sync with `wandb sync` once
+`WANDB_API_KEY` is set in the kernel). Expected ~3.5 h. Log: `/content/countdown/train.log`; checkpoints every 50 steps.
 
 HF `generate` on this model runs ~1.6k tok/s even at 512 sequences in flight (training fwd+bwd runs ~8k tok/s), so the
 A100 sits at ~20% power. Next lever: vLLM colocated generation (`--use_vllm`, vllm==0.27.1 pins torch 2.13 vs Colab's 2.11 —

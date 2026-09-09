@@ -4,6 +4,8 @@
 #   ./colab_cli.sh setuplog         # tail of setup.log (ends with SETUP_OK)
 #   ./colab_cli.sh sync             # re-upload code files
 #   ./colab_cli.sh train [ARGS...]  # launch train_countdown_grpo.py in the background on the VM (nohup, log file)
+#       recommended A100 args: --model /content/qwen3.5-0.8b-text --curriculum 3only --max_completion_length 1024 \
+#         --per_device_train_batch_size 4 --grad_accum 32 --num_generations 16 --generation_batch_size 512 --use_vllm --save_steps 50
 #   ./colab_cli.sh tail [N]         # last N lines of the training log
 #   ./colab_cli.sh metrics          # parsed per-step metrics from the log
 #   ./colab_cli.sh eval [ARGS...]   # run eval_countdown.py (foreground, streams)

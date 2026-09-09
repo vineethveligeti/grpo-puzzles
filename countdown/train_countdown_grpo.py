@@ -160,7 +160,7 @@ def main():
         beta=a.beta,
         loss_type="dapo",
         epsilon_high=a.epsilon_high,
-        use_liger_loss=a.liger,
+        **({"use_liger_kernel": True} if a.liger else {}),   # TRL 1.12: fused Liger kernels incl. the GRPO loss
         scale_rewards="group",
         # --- generation backend ---
         use_vllm=a.use_vllm,

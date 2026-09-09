@@ -23,7 +23,7 @@ x() { "$COLAB" exec -s "$SESSION"; }          # piped python -> kernel
 case "${1:-}" in
   setup)
     "$COLAB" new -s "$SESSION" --gpu A100
-    "$COLAB" install -s "$SESSION" "trl>=1.11" "transformers>=5.2" datasets peft accelerate wandb matplotlib flash-linear-attention
+    "$COLAB" install -s "$SESSION" "trl>=1.11" "transformers>=5.2" datasets peft accelerate wandb matplotlib flash-linear-attention huggingface_hub
     echo "import os; os.makedirs('$REMOTE', exist_ok=True)" | x
     for f in data.py rewards.py train_countdown_grpo.py eval_countdown.py; do
       "$COLAB" upload -s "$SESSION" "$HERE/$f" "$REMOTE/$f"
@@ -55,6 +55,12 @@ for l in open('$LOG'):
     echo "import tarfile,glob,os; os.chdir('$REMOTE'); t=tarfile.open('/content/out.tgz','w:gz'); [t.add(p) for p in ['results']+glob.glob('runs/*/curves.png')+glob.glob('runs/*/checkpoint-*/trainer_state.json')+glob.glob('runs/*/final/trainer_state.json') if os.path.exists(p)]; t.close(); print(os.path.getsize('/content/out.tgz'))" | x
     "$COLAB" download -s "$SESSION" /content/out.tgz "$HERE/colab_out/out.tgz" && tar -xzf "$HERE/colab_out/out.tgz" -C "$HERE/colab_out" && ls -R "$HERE/colab_out" | head -30
     ;;
+  vllm)   # optional: fast generation. Check torch/fla survive the install before using --use_vllm.
+    "$COLAB" install -s "$SESSION" "vllm==0.27.1"
+    echo "import subprocess; print(subprocess.run('python -c \"import torch, vllm; print(torch.__version__, torch.cuda.is_available(), vllm.__version__); from fla.ops.gated_delta_rule import chunk_gated_delta_rule; print(\'fla OK\')\"', shell=True, capture_output=True, text=True))" | x
+    ;;
+  py)     # arbitrary python in the kernel:  ./colab_cli.sh py "print(1)"
+    shift; echo "$*" | x ;;
   stop)  "$COLAB" stop -s "$SESSION" ;;
   status) "$COLAB" status -s "$SESSION"; "$COLAB" sessions ;;
   *) sed -n '2,12p' "$0" ;;

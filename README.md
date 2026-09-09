@@ -72,12 +72,16 @@ GPU: **A100 40 GB** is the comfortable choice for both projects. L4 (24 GB) work
    conv of width 4); each kernel falls back independently, so if its from-source build fails you lose very little —
    skip it, or get a prebuilt one via `pip install kernels` + `from_pretrained(..., use_kernels=True)` (Hub repo
    `kernels-community/mamba-ssm`).
-3. **TRL + vLLM + Qwen3.5 text-only was broken until very recently** ([TRL #5269](https://github.com/huggingface/trl/issues/5269),
-   [vLLM #36275](https://github.com/vllm-project/vllm/issues/36275)): vLLM had no text-only Qwen3.5 class, so
-   weight sync failed with *"no module or parameter named 'model'"*. vLLM merged the fix on 2026-07-29; the first
-   release carrying it is **v0.27.0**, and TRL 1.12 accepts `vllm<=0.27.1`. So `--use_vllm` with `vllm==0.27.1` is
-   *expected* to work but the issue is still open for tracking — our default is `use_vllm=False` (plain
-   `model.generate`, slower, always works). Try vLLM once things run; fall back if you see that error.
+3. **TRL + vLLM + Qwen3.5 text-only is still broken in vllm 0.27.1 — but there is a 2-minute workaround.**
+   ([TRL #5269](https://github.com/huggingface/trl/issues/5269)) vLLM instantiates the VLM class from the Hub
+   checkpoint, TRL's colocated weight sync sends text-only names → *"no module or parameter named 'model'"*.
+   vLLM 0.27.1 *does* have a text-only `Qwen3_5ForCausalLM`; it just needs a checkpoint that says so:
+   `python countdown/make_text_only_ckpt.py Qwen/Qwen3.5-0.8B-Base /content/qwen3.5-0.8b-text`, then pass that dir as
+   `--model` together with `--use_vllm`. Verified 2026-09-08 on an A100: raw vLLM decode **15.4k tok/s** vs **~1.6k tok/s**
+   for HF `generate` (512 sequences in flight, 1024 tokens). Install notes: `vllm==0.27.1` pins `torch==2.13.0` (Colab ships
+   2.11) — the swap works with `flash-linear-attention` and transformers 5.16.1, but you must
+   `pip uninstall -y torchaudio torchcodec` afterwards (they stay on the CUDA-12.8 build and break `import torch`-dependent
+   imports). Use `--vllm_gpu_memory_utilization 0.45`; 0.3 leaves no room for vLLM's KV/state cache next to the trainer.
 4. **248k-token vocabulary.** The logits tensor (batch × completion_len × 248,320) dominates memory at the
    loss step, not the 0.8B weights. That's why `per_device_train_batch_size` matters more than you'd expect;
    halve it before reaching for LoRA.

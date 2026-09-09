@@ -44,6 +44,7 @@ non-zero-std reward, i.e. GRPO has *something* to push on. The format reward is 
 
 Notebook (self-contained, uploaded to Drive): https://colab.research.google.com/drive/1dPoHlXynzgw2vgulGhAgavdAklal27Ef
 Colab Secrets `HF_TOKEN` + `WANDB_API_KEY` are set; logins verified in-notebook.
+W&B run: https://wandb.ai/vineethveligeti-asu/grpo-countdown/runs/s9bynohq
 
 ## What was verified (2026-09-07, sandbox: trl 1.12.0, transformers 5.16.1, datasets 5.0.1)
 

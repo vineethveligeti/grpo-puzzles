@@ -71,9 +71,35 @@ def parse_args():
     p.add_argument("--report_to", default="none", help="'wandb' or 'none'")
     p.add_argument("--save_steps", type=int, default=100)
     p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--resume", default=None, help="path to a checkpoint dir to resume from")
+    p.add_argument("--resume", default=None,
+                   help="checkpoint dir to resume from, or 'auto' = latest local checkpoint, else the Hub copy (--hub_repo)")
+    p.add_argument("--hub_repo", default=None,
+                   help="private HF repo id, e.g. <user>/qwen3.5-0.8b-countdown-grpo. Every --save_steps checkpoint is pushed "
+                        "there (hub_strategy='checkpoint', folder last-checkpoint), so a dead VM costs at most save_steps of work. "
+                        "Needs HF_TOKEN in the environment.")
     p.add_argument("--cpu_smoke", action="store_true", help="tiny model, 2 steps, CPU: checks the wiring only")
     return p.parse_args()
+
+
+def _find_resume_checkpoint(output_dir: str, hub_repo: str | None) -> str | None:
+    """Latest local checkpoint-N, else the Hub's last-checkpoint (downloaded into output_dir), else None."""
+    import glob, re
+    local = sorted(glob.glob(os.path.join(output_dir, "checkpoint-*")),
+                   key=lambda p: int(re.findall(r"\d+$", p)[0]) if re.findall(r"\d+$", p) else -1)
+    if local:
+        print(f"resuming from local {local[-1]}"); return local[-1]
+    if hub_repo:
+        from huggingface_hub import HfApi, snapshot_download
+        try:
+            files = HfApi().list_repo_files(hub_repo)
+        except Exception as e:
+            print(f"no Hub checkpoint ({type(e).__name__}); starting fresh"); return None
+        if any(f.startswith("last-checkpoint/") for f in files):
+            path = snapshot_download(hub_repo, allow_patterns=["last-checkpoint/*"],
+                                     local_dir=os.path.join(output_dir, "_hub"))
+            ck = os.path.join(path, "last-checkpoint")
+            print(f"resuming from Hub {hub_repo}/last-checkpoint -> {ck}"); return ck
+    print("no checkpoint found; starting fresh"); return None
 
 
 def main():
@@ -85,6 +111,9 @@ def main():
         a.max_steps, a.num_generations, a.per_device_train_batch_size, a.grad_accum = 2, 2, 2, 1
         a.max_completion_length, a.n_train, a.save_steps = 24, 8, 1000
         a.output_dir = os.path.join(a.output_dir, "cpu_smoke")
+
+    if a.resume == "auto":
+        a.resume = _find_resume_checkpoint(a.output_dir, a.hub_repo)
 
     train_ds, _eval_ds = load_countdown(n_train=a.n_train, curriculum=a.curriculum, seed=a.seed)
     print(f"train prompts: {len(train_ds)}  | example:\n{train_ds[0]['prompt']}\n")
@@ -139,6 +168,11 @@ def main():
         save_steps=a.save_steps,
         save_total_limit=3,
         report_to=a.report_to,
+        # --- off-VM checkpoints (Colab VMs die) ---
+        push_to_hub=a.hub_repo is not None,
+        hub_model_id=a.hub_repo,
+        hub_strategy="checkpoint" if a.hub_repo else "every_save",
+        hub_private_repo=True,
     )
 
     trainer = GRPOTrainer(

@@ -35,7 +35,20 @@ def parse_args():
     p.add_argument("--sample", action="store_true", help="temperature 1.0 sampling instead of greedy")
     p.add_argument("--k", type=int, default=1, help="samples per puzzle when --sample (pass@k)")
     p.add_argument("--out_dir", default="results")
+    p.add_argument("--vllm", action="store_true", help="generate with vLLM (all k samples in one call; ~10x faster)")
+    p.add_argument("--gpu_memory_utilization", type=float, default=0.85)
     return p.parse_args()
+
+
+def generate_vllm(model_path, prompts, max_new_tokens, sample, k, gpu_mem):
+    """Returns a list of k lists of completions (one list per repetition), like k calls of generate()."""
+    from vllm import LLM, SamplingParams
+    llm = LLM(model=model_path, dtype="bfloat16", gpu_memory_utilization=gpu_mem,
+              max_model_len=max_new_tokens + 256, enable_prefix_caching=False)
+    sp = SamplingParams(temperature=1.0 if sample else 0.0, top_p=1.0, max_tokens=max_new_tokens, n=k if sample else 1)
+    outs = llm.generate(prompts, sp)
+    reps = [[o.outputs[r].text for o in outs] for r in range(k if sample else 1)]
+    return reps
 
 
 @torch.no_grad()
@@ -67,12 +80,14 @@ def main():
     tok.padding_side = "left"
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(a.model, dtype=dtype, device_map="auto" if torch.cuda.is_available() else None)
-    if a.adapter:
-        from peft import PeftModel
-        model = PeftModel.from_pretrained(model, a.adapter).merge_and_unload()
-    model.eval()
+    model = None
+    if not a.vllm:
+        dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+        model = AutoModelForCausalLM.from_pretrained(a.model, dtype=dtype, device_map="auto" if torch.cuda.is_available() else None)
+        if a.adapter:
+            from peft import PeftModel
+            model = PeftModel.from_pretrained(model, a.adapter).merge_and_unload()
+        model.eval()
 
     prompts = eval_ds["prompt"]
     targets, nums = eval_ds["target"], eval_ds["nums"]
@@ -81,8 +96,9 @@ def main():
     t0 = time.time()
     solved_any = [0] * len(prompts)
     per_sample_solve, per_sample_format, lengths, samples = [], [], [], []
+    vllm_reps = generate_vllm(a.model, prompts, a.max_new_tokens, a.sample, k, a.gpu_memory_utilization) if a.vllm else None
     for rep in range(k):
-        comps = generate(model, tok, prompts, a.max_new_tokens, a.sample, a.batch_size)
+        comps = vllm_reps[rep] if a.vllm else generate(model, tok, prompts, a.max_new_tokens, a.sample, a.batch_size)
         ar = answer_reward(comps, target=targets, nums=nums)
         fr = format_reward(comps)
         per_sample_solve.extend(ar)
@@ -105,7 +121,8 @@ def main():
         "model": a.model,
         "adapter": a.adapter,
         "n_puzzles": len(prompts),
-        "decoding": f"sample k={k}" if a.sample else "greedy",
+        "decoding": (f"sample k={k}" if a.sample else "greedy") + (" vllm" if a.vllm else " hf"),
+        "max_new_tokens": a.max_new_tokens,
         "solve_rate": statistics.mean(first),
         "solve_rate_3nums": statistics.mean(first[i] for i in n3) if n3 else None,
         "solve_rate_4nums": statistics.mean(first[i] for i in n4) if n4 else None,

@@ -42,6 +42,21 @@ So: ~50 s/step → 400 steps ≈ 5.6 h. Even at 1024 tokens ~85–90% of complet
 ~680 tokens), and roughly 1 completion in 32 either formats correctly or solves — enough that most groups have a
 non-zero-std reward, i.e. GRPO has *something* to push on. The format reward is what has to teach it to stop.
 
+GPU-utilisation work (2026-09-08 evening, via the Colab CLI session `cd-a100`):
+
+| generation config | first opt step (incl. generation) | later opt steps | per 32 completions |
+|---|---|---|---|
+| HF generate, 32 per call, 32/step (browser run, 32 steps done then interrupted) | 52 s | — | 52 s |
+| HF generate, 512 per call, 16 gens/prompt, 128/step | 313 s | 15 s ×3 | 22 s |
+
+HF `generate` on this model runs ~1.6k tok/s even at 512 sequences in flight (training fwd+bwd runs ~8k tok/s), so the
+A100 sits at ~20% power. Next lever: vLLM colocated generation (`--use_vllm`, vllm==0.27.1 pins torch 2.13 vs Colab's 2.11 —
+tested on the CLI session before committing to it). With 16 gens/prompt, 34% of groups had non-uniform reward at step 1
+(vs 25–50% with 8).
+
+The browser runtime was deleted after the baseline JSONs were saved to `countdown/results/` (committed).
+The interrupted browser run (32 steps, 3only/len1024/8 gens) is still on W&B as `cd-0.8b-base-3only-len1024`.
+
 Notebook (self-contained, uploaded to Drive): https://colab.research.google.com/drive/1dPoHlXynzgw2vgulGhAgavdAklal27Ef
 Colab Secrets `HF_TOKEN` + `WANDB_API_KEY` are set; logins verified in-notebook.
 W&B run: https://wandb.ai/vineethveligeti-asu/grpo-countdown/runs/s9bynohq

@@ -18,6 +18,10 @@ Key facts baked in (see GUIDE.md for the why):
   * beta=0.0 (TRL default): no reference model, saves memory; loss_type defaults to "dapo".
   * Effective batch = per_device_train_batch_size * grad_accum completions
                     = 8 * 4 = 32 completions = 4 prompts x 8 generations per optimizer step.
+  * GPU utilisation: a GRPO step is ~80% autoregressive generation, and HF generate on a 0.8B model is
+    kernel-launch-bound, so the A100 sits at ~20% power with 32 sequences in flight. --generation_batch_size 128
+    decodes 128 sequences per call (spread over 4 optimizer steps, standard "generation batch > train batch",
+    PPO clip handles the mild off-policy-ness) for ~the same wall-clock as 32. --use_vllm goes further.
 """
 
 from __future__ import annotations
@@ -47,6 +51,14 @@ def parse_args():
     p.add_argument("--per_device_train_batch_size", type=int, default=8)
     p.add_argument("--grad_accum", type=int, default=4)
     p.add_argument("--max_completion_length", type=int, default=512)
+    p.add_argument("--generation_batch_size", type=int, default=None,
+                   help="completions generated per HF-generate call, spread over several optimizer steps "
+                        "(TRL steps_per_generation). Default = 1 optimizer step's worth "
+                        "(per_device_train_batch_size * grad_accum). Decoding a 0.8B model is launch-bound, "
+                        "so 128 costs barely more wall-clock than 32 -> ~3-4x faster steps. Must be a "
+                        "multiple of per_device_train_batch_size and of num_generations.")
+    p.add_argument("--no_grad_ckpt", action="store_true",
+                   help="disable gradient checkpointing (saves the recompute forward; fits on 40 GB at batch 4)")
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--lora", action="store_true", help="LoRA r=32 on all linear layers instead of full FT")
     p.add_argument("--use_vllm", action="store_true", help="colocated vLLM generation (needs vllm>=0.27, see GUIDE)")
@@ -101,10 +113,11 @@ def main():
         max_grad_norm=1.0,
         bf16=not on_cpu,
         use_cpu=on_cpu,
-        gradient_checkpointing=not on_cpu,
+        gradient_checkpointing=(not on_cpu) and (not a.no_grad_ckpt),
         # --- GRPO ---
         num_generations=a.num_generations,
         max_completion_length=a.max_completion_length,
+        generation_batch_size=a.generation_batch_size,
         temperature=a.temperature,
         beta=a.beta,
         loss_type="dapo",

@@ -110,11 +110,13 @@ MAXLEN = 1024            # 512 clipped 98% of base completions, 1024 still clips
 print(f"{(time.time()-t0)/5:.0f} s/step incl. model load; 400 steps <= {(time.time()-t0)/5*400/3600:.1f} h")"""),
 
     md("""## Step 4b — train (a few hours). First 5 steps in the log: `frac_reward_zero_std`, `rewards/answer_reward/mean`.
-Batch 4 × accum 8 is already the A100 setting at 1024 tokens; on an L4 use `--lora --lr 2e-5` or `--max_completion_length 512`."""),
+Batch 4 × accum 8 is the A100 setting at 1024 tokens; on an L4 use `--lora --lr 2e-5` or `--max_completion_length 512`.
+`--generation_batch_size 128` = decode 128 completions per HF-generate call and spend them over 4 optimizer steps: HF generate on a
+0.8B model is launch-bound, so this is ~free and lifts the A100 from ~20% power. Without it a step is ~50 s, ~80% of it generation."""),
 
     code("""import os; os.environ["WANDB_PROJECT"] = "grpo-countdown"
 RUN_DIR = "runs/countdown-qwen3.5-0.8b-base"
-!python train_countdown_grpo.py --output_dir $RUN_DIR --max_steps 400 --report_to $REPORT_TO --run_name cd-0.8b-base-3only-len1024 --curriculum $CURRICULUM --max_completion_length $MAXLEN --per_device_train_batch_size 4 --grad_accum 8 --save_steps 50"""),
+!python train_countdown_grpo.py --output_dir $RUN_DIR --max_steps 400 --report_to $REPORT_TO --run_name cd-0.8b-base-3only-len1024-gb128 --curriculum $CURRICULUM --max_completion_length $MAXLEN --per_device_train_batch_size 4 --grad_accum 8 --generation_batch_size 128 --save_steps 50"""),
 
     md("## Step 5 — curves (from the checkpoint's `trainer_state.json`; W&B has the full set)"),
 

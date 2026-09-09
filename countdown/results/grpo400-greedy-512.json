@@ -1,0 +1,249 @@
+{
+  "metrics": {
+    "tag": "grpo400-greedy-512",
+    "model": "aang2/qwen3.5-0.8b-countdown-grpo",
+    "adapter": null,
+    "n_puzzles": 500,
+    "decoding": "greedy vllm",
+    "max_new_tokens": 512,
+    "solve_rate": 0.304,
+    "solve_rate_3nums": 0.5176470588235295,
+    "solve_rate_4nums": 0.08163265306122448,
+    "pass@1": 0.304,
+    "format_rate_clean": 0.342,
+    "format_rate_any": 0.342,
+    "mean_completion_tokens": 433.834,
+    "seconds": 202.8
+  },
+  "samples": [
+    {
+      "nums": [
+        95,
+        21,
+        3
+      ],
+      "target": 88,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 95, 21, and 3 that equals 88. They can use basic operations and each number once. Hmm, I need to figure out how to combine these three numbers to get 88.\n\nFirst, maybe I can subtract 95 from 21 to get negative 74, but that's not helpful. Wait, maybe add 95 and 21 first. 95 + 21 is 116. Then subtract 3 from that: 116 - 3 = 113. That's way too big. Not 88.\n\nWhat if I do 95 - 21? That's 74. Then add 3: 74 + 3 = 77. Still not 88. Hmm. Maybe multiply 95 and 21 first. 95 * 21. Let me calculate that. 95 * 20 is 1900, plus 95 is 2095. Then subtract 3: 2095 - 3 = 2092. Nope.\n\nWait, maybe use division. Like 95 divided by 3 is about 31.666. Then add 21: 31.666 + 21 = 52.666. Not 88.\n\nWhat about 95 + 21 + 3? That's 119. Too big. Maybe subtract 3 from 95 + 21? 116 - 3 = 113. No.\n\nWait, maybe 95 - 21 = 74. Then 74 + 14 = 88. But how to get 14? 3 + 11? Not sure. Alternatively, 95 - 21 = 74, then 74 + 14 = 88. But 14 is 3 + 11? Not helpful.\n\nWait, maybe 95 - 21 = 74, then 74 + 14 = 88. But 14 is 3 + 11? Not sure. Alternatively, 95 - 21 = 7",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        72,
+        30,
+        29
+      ],
+      "target": 72,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 72, 30, and 29 that equals 72. Each number can be used once, and basic operations allowed. Hmm, so I need to combine these three numbers to get 72.\n\nFirst, maybe subtract 30 from 72? That gives 42, but then I have 29 left. Not helpful. What if I add 30 and 29? 30+29=59, then 72-59=13. Not good. Maybe multiply 30 and 29 first? 30*29=870. Then 870-72=800. Nope.\n\nWait, maybe use subtraction first. 72-30=42, then 42-29=13. Still not 72. Hmm. What if I do 72 divided by something? 72/30=2.4, 72/29\u22482.48. Not integer.\n\nWait, maybe add 30 and 29, then subtract 72? 30+29=59, 59-72=-13. No.\n\nAlternatively, 72-30=42, then 42-29=13. Not helpful. Maybe 72-30=42, then 42-29=13. Still not.\n\nWait, what if I do 72 divided by 30? 72/30=2.4, then 2.4+29=31.4. Not 72.\n\nHmm. Maybe 72-30=42, then 42-29=13. Not. Wait, 72-30=42, then 42-29=13. No.\n\nWait, maybe 72-30=42, then 42-29=13. Still not.\n\nWait, what if I do 72-30=42, then 42-29=13. No. Hmm.\n\nWait, maybe 72-30=42, then 42-29=",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        67,
+        69,
+        69
+      ],
+      "target": 71,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 67, 69, and 69 that equals 71. Each number can be used once. So, I need to combine these three numbers with basic operations to get 71.\n\nFirst, maybe I can add the two 69s together. 69 + 69 is 138. Then subtract 67 from that. 138 - 67 is 71. That works! Let me check: 69 + 69 = 138, then 138 - 67 = 71. Yep, that's right. So the equation is 69 + 69 - 67 = 71.\n</think>\n\n<answer> 69 + 69 - 67 </answer>",
+      "equation": "69 + 69 - 67",
+      "solved": true
+    },
+    {
+      "nums": [
+        67,
+        79,
+        39,
+        56
+      ],
+      "target": 77,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 67, 79, 39, and 56 that equals 77. Each number can be used once. Hmm, I need to think about combinations of these numbers.\n\nFirst, maybe subtracting some numbers. Let's see, 77 is close to 79. If I take 79 minus 2, that's 77. But where do I get 2? Maybe 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but how to get 2? Maybe 67 minus 65? Not helpful.\n\nWait, maybe 79 minus 2 is 77, but how to get 2? Let's see, 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but maybe 67 minus 65? Not helpful.\n\nAnother idea: 79 minus 2 is 77, but how to get 2? Maybe 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but maybe 67 minus 65? Not helpful.\n\nWait, maybe 79 minus 2 is 77, but how to get 2? Let's see, 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but maybe 67 minus 65? Not helpful.\n\nWait, maybe 79 minus 2 is 77, but how to get 2? Let's see, 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but maybe 67 minus 65? Not helpful.\n\nWait, maybe 79 minus 2 is 77, but how to get 2? Let's see, 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but maybe 67 minus 65? Not helpful.\n\nWait, maybe 79 minus 2 is 77, but how to get 2? Let's see, 67 minus 65? Not sure. Alternatively, 79 minus 2 is 77, but maybe ",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        6,
+        77,
+        73,
+        20
+      ],
+      "target": 44,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 6, 77, 73, and 20 that equals 44. Each number can be used once. Hmm, I need to figure out a combination of these numbers that gives 44.\n\nFirst, maybe I can rearrange the numbers to make the equation simpler. Let's list the numbers: 6, 77, 73, 20.\n\nLet me think about adding them up. 6 + 77 + 73 + 20. Let's calculate that: 6+77=83, 83+73=156, 156+20=176. That's way more than 44. So maybe I need to subtract or multiply.\n\nWhat if I subtract 20 from the sum? 176 - 20 = 156. Not helpful. Maybe 77 - 6 = 71, then 71 + 73 = 144, then 144 - 20 = 124. Still not 44.\n\nWait, maybe I can use subtraction first. Let's see. 77 - 6 = 71. Then 71 + 73 = 144. Then 144 - 20 = 124. No. Hmm.\n\nWhat if I take 77 - 6 = 71, then 71 + 73 = 144, then 144 - 20 = 124. Not good. Maybe 77 - 6 = 71, then 71 + 73 = 144, then 144 - 20 = 124. Still not.\n\nWait, maybe 77 - 6 = 71, then 71 + 73 = 144, then 144 - 20 = 124. No. Hmm.\n\nAlternatively, maybe 77 - 6 = 71, then 71 + 73 = 144, then 144 - 20 = 124. Not helpful.\n\nWait, maybe 77 - 6 = 71",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        27,
+        95,
+        4
+      ],
+      "target": 17,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 27, 95, and 4 that equals 17. They can use basic operations and each number once. Hmm, I need to find a combination that gives 17.\n\nFirst, maybe subtract something. 27 minus 4 is 23, which is close to 17 but not quite. 23 minus 6 would be 17, but I don't have 6. Maybe 95 minus 27 is 68, that's way too big. 95 minus 4 is 91, nope.\n\nWhat about adding? 27 + 4 is 31, which is higher than 17. 95 + 27 is 122, even bigger. Maybe a combination of subtraction and addition. Let's see: 95 - 27 = 68, then 68 - 51 = 17, but 51 isn't there. 95 - 27 - 4 = 64, still not 17.\n\nWait, maybe 27 + 4 = 31, then 31 - 14 = 17, but 14 isn't there. 95 - 27 = 68, 68 - 51 = 17, but 51 isn't there. Hmm.\n\nWhat about 95 - 27 - 4 = 64, as before. Not helpful. Maybe 27 - 4 = 23, then 23 - 6 = 17, but 6 isn't there. 95 - 27 = 68, 68 - 51 = 17, but 51 isn't there.\n\nWait, maybe 95 - 27 - 4 = 64, but 64 is close to 17? No, 64 is way bigger. Maybe 27 + 4 = 31, then 31 - 14 = 17, but 14 isn't there. 95 - 27 = 68, 68 - 51 = 17, but 51 isn't there.\n\nHmm, maybe 95 -",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        87,
+        55,
+        98,
+        91
+      ],
+      "target": 96,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 87, 55, 98, 91 that equals 96. Each number can be used once. Hmm, I need to think about how to combine these numbers.\n\nFirst, maybe subtracting some numbers. Let's see, 98 minus 91 is 7, but that's not 96. Maybe add some numbers? 87 plus 55 is 142, which is way too big. 98 plus 91 is 189, nope.\n\nWhat about multiplication? 87 times 91... that's a big number. 87*90 is 7830, plus 87 is 7917, way off. Maybe divide? 98 divided by 91 is about 1.07, not helpful.\n\nWait, maybe subtracting 91 from 98 gives 7, but then add 87 and 55? 7 + 87 + 55 = 149, which is too high. 98 - 91 = 7, then 7 + 87 + 55 = 149. Not 96.\n\nWhat about 98 minus 91 is 7, then 7 + 87 + 55? Still 149. Not good. Maybe 98 - 91 = 7, then 7 + 87 + 55? No.\n\nWait, maybe 98 - 91 = 7, then 7 + 87 + 55? Still 149. Not working.\n\nWhat about 98 - 91 = 7, then 7 + 87 + 55? No. Maybe 98 - 91 = 7, then 7 + 87 + 55? Still 149.\n\nHmm. Maybe 98 - 91 = 7, then 7 + 87 + 55? No. Wait, 98 - 91 = 7, then 7 + 87 + 55? Still 149.\n\nWait, maybe 98 - 91 = 7, then 7 + ",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        14,
+        32,
+        2
+      ],
+      "target": 20,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 14, 32, and 2 that equals 20. They can use basic operations and each number once. Hmm, I need to figure out a combination of these numbers that gives 20.\n\nFirst, maybe subtracting some numbers. Let's see, 32 minus 14 is 18, which is close to 20. Then if I add 2, 18 + 2 = 20. Oh, that works! So 32 - 14 + 2 equals 20. Let me check: 32 minus 14 is 18, plus 2 is 20. Yep, that's right. So the equation is 32 - 14 + 2 = 20.\n</think>\n\n<answer> 32 - 14 + 2 </answer>",
+      "equation": "32 - 14 + 2",
+      "solved": true
+    },
+    {
+      "nums": [
+        57,
+        22,
+        54
+      ],
+      "target": 66,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 57, 22, and 54 that equals 66. Each number can be used once, and basic operations allowed. Hmm, I need to figure out how to combine these three numbers to get 66.\n\nFirst, maybe subtracting some numbers. Let's see, 57 minus 22 is 35, and 35 plus 31 would be 66? Wait, but 31 isn't a number here. Maybe 54 minus 22 is 32, and 57 minus 32 is 25, not helpful. Alternatively, 57 minus 54 is 3, then 3 plus 22 is 25, still not 66.\n\nWait, maybe multiplication and addition. Let's try 57 times 22. That's 1254, which is way too big. Not good. Maybe 57 divided by 22? 57/22 is about 2.59, not helpful.\n\nWhat about 57 minus 22 is 35, then 35 plus 31? No. Maybe 54 plus 22 is 76, then 76 minus 10? Not sure.\n\nWait, 57 minus 54 is 3, then 3 plus 22 is 25. Not 66. Hmm. Maybe 57 plus 22 is 79, minus 13? Not sure.\n\nAlternatively, 57 minus 22 is 35, then 35 plus 31? No. Maybe 54 plus 22 is 76, minus 10? Not helpful.\n\nWait, maybe 57 divided by 22 is about 2.59, then 2.59 plus 54 is 56.59, close to 57 but not 66.\n\nHmm, maybe 57 minus 22 is 35, then 35 plus 31? No. Wait, 54 minus 22 is 32, then 57 minus 32 is 25. Not 66.\n\nWait, maybe 57 plus 22 is 7",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        47,
+        14,
+        3
+      ],
+      "target": 30,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 47, 14, and 3 that equals 30. They can use basic operations and each number once. Hmm, I need to figure out how to combine these three numbers to get 30.\n\nFirst, maybe I can subtract 47 from 14 to get negative 33, then add 3 to make it 30. Let me check: 14 - 47 = -33, then -33 + 3 = -30. That's not right. Maybe I need to adjust that.\n\nWait, maybe 47 - 14 - 3. Let's calculate that: 47 - 14 is 33, then 33 - 3 is 30. Oh, that works! So 47 minus 14 minus 3 equals 30. Let me verify: 47 - 14 = 33, 33 - 3 = 30. Yep, that's correct. So the equation is 47 - 14 - 3 = 30.\n</think>\n\n<answer> 47 - 14 - 3 </answer>",
+      "equation": "47 - 14 - 3",
+      "solved": true
+    },
+    {
+      "nums": [
+        22,
+        29,
+        69
+      ],
+      "target": 62,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 22, 29, and 69 that equals 62. They can use basic operations and each number once. Hmm, I need to figure out a combination of these numbers that gives 62.\n\nFirst, maybe I can subtract 22 from 29 to get 7. Then 69 minus 7 is 62. Oh, that works! So 29 - 22 + 69 equals 62. Let me check: 29 minus 22 is 7, then 7 plus 69 is 76? Wait, no, wait. Wait, 29 minus 22 is 7, then 7 plus 69 is 76? But the target is 62. Hmm, that's not right. Wait, maybe I messed up the order.\n\nWait, 29 minus 22 is 7, then 7 plus 69 is 76. But we need 62. So that's not it. Maybe another combination. Let's think. 69 minus 22 is 47. Then 47 plus 15 is 62. But 15 isn't a number here. Maybe 69 minus 22 is 47, then 47 minus 15? Not helpful.\n\nWait, 29 minus 22 is 7, then 7 plus 69 is 76. Not 62. Hmm. Maybe 69 minus 22 is 47, then 47 minus 15? Not sure. Alternatively, 29 minus 22 is 7, then 7 plus 69 is 76. Not 62. Maybe 69 minus 22 is 47, then 47 minus 15? Not helpful.\n\nWait, maybe 29 minus 22 is 7, then 7 plus 69 is 76. Not 62. Hmm. Maybe 69 minus 22 is 47, then 47 minus 15? Not sure. Alternatively, 29 minus 22 is 7, then 7 plus 69 is 76. Not 62. Maybe 69 minus 2",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        27,
+        83,
+        83
+      ],
+      "target": 28,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 27, 83, and 83 that equals 28. They can use basic operations and each number once. Hmm, so I need to combine these three numbers to get 28.\n\nFirst, maybe subtract the smaller from the larger? 83 minus 27 is 56, which is way bigger than 28. Not helpful. Maybe add them? 27 + 83 is 110, still too big. What about multiplication? 27 times 83... that's a lot. 27*80 is 2160, plus 27*3=81, so 2241. Nope.\n\nWait, maybe division? 83 divided by 27 is about 3.07, but that's not 28. Not sure. Maybe combine them in a different way. Like, 83 minus 27 is 56, then 56 minus 28 is 28. Oh! So 83 - 27 - 28 = 28. But wait, the numbers are 27, 83, 83. So 83 - 27 - 83 = -27. That's not 28. Oh, right, I used the second 83. So maybe 83 - 27 - 83 = -27. Not good.\n\nWait, maybe 83 - 27 - 83 = -27. No. What if 83 - 27 - 83 = -27. Not 28. Hmm. Maybe 83 - 27 - 83 = -27. Not helpful.\n\nWait, maybe 83 - 27 - 83 = -27. No. What if 83 - 27 - 83 = -27. Not 28. Maybe 83 - 27 - 83 = -27. Not good.\n\nWait, maybe 83 - 27 - 83 = -27. No. What if 83 - 27 - 83 = -27. Not 28. Hmm.\n\nWait, maybe 83",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        18,
+        71,
+        86,
+        43
+      ],
+      "target": 76,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 18, 71, 86, and 43 that equals 76. Each number can be used once. Hmm, I need to think about how to combine these numbers.\n\nFirst, maybe subtracting some numbers. Let's see, 76 is close to 71. If I take 71 minus 5, that's 66, not 76. Wait, 71 minus 5 is 66, but 76 is 71 plus 5. Oh, right! So 71 + 5 = 76. But how do I get 5 from the other numbers?\n\nThe other numbers are 18, 86, and 43. Maybe I can subtract 18 from 86 to get 68, then subtract 43 to get 25? No, that's not 5. Wait, 86 minus 18 is 68, then 68 minus 43 is 25. Not helpful.\n\nAlternatively, 86 minus 18 is 68, then 68 minus 43 is 25. Still not 5. Hmm. Maybe 71 minus 18 is 53, then 53 minus 43 is 10. Not 5.\n\nWait, 71 minus 18 is 53, then 53 minus 43 is 10. Still not 5. Maybe 86 minus 18 is 68, then 68 minus 43 is 25. Not 5.\n\nWait, maybe 18 plus 43 is 61, then 61 minus 71 is -10. Not 76.\n\nHmm, maybe 71 plus 18 is 89, then 89 minus 13 is 76. But how to get 13 from 86 and 43? 86 minus 43 is 43, then 43 minus 30 is 13. Not helpful.\n\nWait, 86 minus 43 is 43, then 43 minus 30 is 13. Not 13. Maybe 86 minus ",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        87,
+        96,
+        75
+      ],
+      "target": 84,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 87, 96, and 75 that equals 84. They can use basic operations and each number once. Hmm, I need to find a combination of these numbers that gives 84.\n\nFirst, maybe subtracting some numbers. Let's see, 96 minus 75 is 21. Then 87 minus 21 is 66. That's not 84. Maybe add something? 87 plus 75 is 162, which is way too big. So maybe subtract 96 from 87? 87 - 96 is -9, which is negative. Not helpful.\n\nWait, maybe multiply and divide. Let's try 96 divided by 75. 96 \u00f7 75 is 1.28. Then 87 minus 1.28 is 85.72, which is close to 84 but not exact. Maybe 96 divided by 75 plus 87? 1.28 + 87 = 88.28, still not 84.\n\nWhat about 87 minus 96 plus 75? That's 87 - 96 = -9, then -9 +75 = 66. Nope.\n\nMaybe 96 minus 75 is 21, then 87 minus 21 is 66. Still not 84. Hmm.\n\nWait, maybe 87 plus 75 is 162, minus 96 is 66. No. What if 96 minus 75 is 21, then 87 minus 21 is 66. Not 84.\n\nWait, maybe 87 minus 96 is -9, then -9 plus 75 is 66. Still not.\n\nHmm, maybe 96 divided by 75 is 1.28, then 87 minus 1.28 is 85.72. Close to 84 but not exact. Maybe 96 divided by 75 plus 87 minus 84? Let's see: 1.28 + 87 -84 = 84.28.",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        90,
+        1,
+        64,
+        9
+      ],
+      "target": 55,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 90, 1, 64, and 9 that equals 55. Each number can be used once. Hmm, I need to think about how to combine these numbers with basic operations.\n\nFirst, maybe I can rearrange the numbers to make the result 55. Let's see. 55 is close to 64 minus 9, which is 55. Oh, right! 64 minus 9 is 55. So if I subtract 9 from 64, I get 55. But I need to use all four numbers. So maybe 64 - 9 = 55, but then I'm missing 1 and 90. Wait, but 1 and 90 are left over. Maybe I can combine them with other operations.\n\nWait, 64 - 9 = 55. Then, what about 1 and 90? Maybe 1 + 90 = 91, but that's not helpful. Alternatively, maybe 90 divided by something. Let's think. If I have 64 - 9 = 55, then 55 + 1 = 56, which is close but not 55. 55 + 90 = 145, no. Maybe 90 - 64 = 26, then 26 + 1 = 27, no. Hmm.\n\nWait, maybe 64 - 9 = 55, then 55 + 1 = 56, but we need 55. So 55 + 90 - 1 = 144, no. Alternatively, 90 - 64 = 26, then 26 + 1 = 27, no. Maybe 90 divided by something. Let's see. 90 divided by 1.666... but that's not helpful.\n\nWait, maybe 64 - 9 = 55, then 55 + 1 = 56, but we need 55. So 55 + 90 - 1 = 144, no. Alternatively, 90 - 64 = 26, then 26 + 1 = 27",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        25,
+        48,
+        16,
+        65
+      ],
+      "target": 24,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 25, 48, 16, and 65 that equals 24. Each number can be used once, and basic operations allowed. Hmm, I need to find a combination that gives 24.\n\nFirst, maybe subtract something. 24 is close to 48, which is double 24. So 48 minus 24 is 24. But we have 25 and 16 and 65. Let's see. 48 minus 25 is 23, then 23 plus 16 is 39, that's not 24. Maybe 48 minus 25 is 23, then 23 minus 16 is 7, then 7 minus 65? That would be negative. Not good.\n\nWhat about 65 minus 25 is 40. Then 40 minus 16 is 24. Oh! That works. 65 - 25 = 40, 40 - 16 = 24. Let me check the steps again. Yes, 65 minus 25 is 40, then 40 minus 16 is 24. All numbers used once, operations are subtraction. So the equation is 65 - 25 - 16 = 24.\n</think>\n\n<answer> 65 - 25 - 16 </answer>",
+      "equation": "65 - 25 - 16",
+      "solved": false
+    },
+    {
+      "nums": [
+        52,
+        20,
+        90,
+        61
+      ],
+      "target": 90,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 52, 20, 90, and 61 that equals 90. Each number can be used once. Hmm, I need to think about how to combine these numbers.\n\nFirst, maybe subtracting some numbers from 90. Let's see. 90 minus 52 is 38, but 38 isn't 61. Then 90 minus 20 is 70, still not 61. 90 minus 61 is 29, which is close but not 61. Wait, maybe adding some numbers? 52 + 20 is 72, plus 61 is 133, too big. 52 + 90 is 142, minus 61 is 81, not 90. Hmm.\n\nWhat about multiplication? 52 * 20 is 1040, way too big. 52 * 61 is... let's calculate that. 50*61=3050, 2*61=122, so total 3172. Not helpful. 20 * 61 is 1220. 52 * 20 is 1040. Not 90.\n\nMaybe division? 90 divided by 61 is about 1.47, not 61. 61 divided by 52 is about 1.17. Not 90.\n\nWait, maybe using all four numbers? Like 52 + 20 + 61 = 133, then 133 - 90 = 43. Not 90. Or 52 - 20 + 61 = 93, which is close to 90. 93 - 3 = 90, but we don't have 3. Hmm.\n\nWait, 52 + 20 + 61 = 133, then 133 - 90 = 43. Not 90. What if we do 52 - 20 + 61 = 93, then 93 - 3 = 90, but no ",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        85,
+        1,
+        94,
+        83
+      ],
+      "target": 48,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 85, 1, 94, and 83 that equals 48. Each number can be used once. Hmm, I need to think about how to combine these numbers with basic operations.\n\nFirst, maybe I can subtract or add some numbers to get a smaller number. Let's see. 85 minus 1 is 84, which is close to 48 but not quite. Then 84 minus 94 would be negative, which isn't helpful. Maybe 85 minus 94 is -9, then adding 1 gives -8, and then adding 83? That would be 75, which is too big. Not working.\n\nWhat about 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73. Nope. Maybe 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73. Still not 48.\n\nWait, maybe I can rearrange the numbers. Let's see. 85 minus 1 is 84. Then 84 minus 94 is -10. Then adding 83 gives 73. Not 48. Hmm.\n\nWhat if I do 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73. Still not. Maybe 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73. Not 48.\n\nWait, maybe 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73. Not 48. Hmm.\n\nWhat if I do 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73. Not 48. Maybe I need a different approach.\n\nWait, maybe 85 minus 1 is 84, then 84 minus 94 is -10, then adding 83 gives 73",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        84,
+        94,
+        45,
+        55
+      ],
+      "target": 100,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 84, 94, 45, and 55 that equals 100. Each number can be used once. Hmm, I need to think about how to combine these numbers with basic operations.\n\nFirst, maybe I can rearrange the numbers to make the result 100. Let's consider adding them up first. 84 + 94 is 178, which is already over 100. So maybe subtracting some numbers from that. 178 - 78 = 100. But 78 isn't a number here. Wait, maybe 84 + 94 - 45 - 55? Let's calculate that. 84 + 94 is 178, then subtract 45 and 55. 45 + 55 is 100, so 178 - 100 = 78. That's not 100. Hmm, maybe another combination.\n\nWhat if I do 84 + 94 - 45 - 55? Wait, 84 + 94 is 178, minus 45 is 133, minus 55 is 78. Still not 100. Maybe 84 + 94 - 45 - 55? No, that's 78. Maybe 84 + 94 - 45 - 55? Wait, maybe 84 + 94 - 45 - 55? No, that's 78. Hmm.\n\nWait, maybe 84 + 94 - 45 - 55? No, that's 78. Maybe 84 + 94 - 45 - 55? Wait, maybe 84 + 94 - 45 - 55? No, that's 78. Hmm. Maybe 84 + 94 - 45 - 55? Wait, maybe 84 + 94 - 45 - 55? No, that's 78. Hmm.\n\nWait, maybe 84 + 94 - 45 - 55? No, that's 78",
+      "equation": null,
+      "solved": false
+    },
+    {
+      "nums": [
+        19,
+        94,
+        57
+      ],
+      "target": 97,
+      "completion": "\nOkay, let's see. The user wants an equation using the numbers 19, 94, and 57 that equals 97. They can use basic operations and each number once. Hmm, I need to figure out how to combine these three numbers to get 97.\n\nFirst, maybe I can subtract one from the other two. Let's try 94 minus 19. That's 75. Then 75 plus 57 is 132, which is way too big. Not good. Maybe add 19 to 57 first? 19 + 57 is 76. Then 76 minus 94? That would be negative, which isn't helpful.\n\nWait, maybe multiply two numbers and then subtract the third. Let's see. 19 times 57 is... let's calculate that. 19*50 is 950, 19*7 is 133, so total is 950 + 133 = 1083. That's way too big. Not good.\n\nWhat about 94 minus 19 is 75, then 75 plus 57 is 132. Nope. Maybe 94 minus 57 is 37, then 37 plus 19 is 56. Still not 97.\n\nHmm, maybe add two numbers and then subtract the third. Let's try 19 + 57 = 76. Then 76 minus 94 is -18. Not good.\n\nWait, maybe 94 minus 19 is 75, then 75 plus 57 is 132. No. What if I do 94 minus 57 first? 94 - 57 = 37. Then 37 plus 19 is 56. Still not 97.\n\nMaybe multiply two numbers and then add the third. 19*57 = 1083, then 1083 - 94 = 989. No.\n\nWait, maybe 94 minus 19 is 75, then 75 plus 57 is 132. No. Hmm.\n\nWait, maybe 94 minus 57 is 3",
+      "equation": null,
+      "solved": false
+    }
+  ]
+}

@@ -8,13 +8,37 @@ Source of truth for where this project stands. Update after every GPU run.
 |---|---|---|
 | code | done, CPU smoke-tested | done, CPU smoke-tested |
 | baseline eval on GPU | **done 2026-09-08** (see below) | **not run** |
-| training run | **running** since 2026-09-08 ~21:30 PT (2nd attempt, vLLM): `cd-0.8b-base-3only-g16-vllm`, see below. 1st attempt (HF generate, 8 gens) stopped at step 32 | not started |
+| training run | **done 2026-09-09 05:15 PT**: 400 steps, `cd08b-3only-g16-vllm`, model on Hub (private) `aang2/qwen3.5-0.8b-countdown-grpo` | not started |
+| after-eval | **done 2026-09-09** (table below) | — |
 | write-up / thread | — | — |
 
 Environment on Colab (2026-09-08): `trl`, `transformers`, `datasets`, `peft`, `accelerate`, `wandb`,
 `flash-linear-attention`, `wordfreq` installed fine. `causal-conv1d` failed to build (from-source CUDA
 extension) — **skipped on purpose**, see README gotcha 2; it only accelerates a width-4 depthwise conv and
 falls back independently to `F.conv1d`.
+
+## Countdown result (run #3, 2026-09-09) — Qwen3.5-0.8B-Base, GRPO, 3-number puzzles only, 400 steps
+
+Training-prompt solve rate (T=1 samples, 50-step means): 2.8% → 5.4% (100–149) → 18.6% (200–249) → 34.2% (300–349) → 41.3% (350–400).
+Format reward 3.7% → 56%, mean length 943 → 691 tokens, dead groups 55% → 5%, entropy 1.05 → 0.70. Curve: `countdown/results/curves_grpo400.png`.
+W&B: https://wandb.ai/vineethveligeti-asu/grpo-countdown/runs/cd08b-3only-g16-vllm
+
+Held-out eval (500 puzzles never trained on, raw 3+4-number mix; vLLM; `results/*.json`):
+
+| model | decoding | tokens | solve (mix) | 3-number | **4-number (never trained)** | pass@8 | clean format | mean len |
+|---|---|---|---|---|---|---|---|---|
+| base | greedy | 1024 | 0.000 | 0.000 | 0.000 | — | 0.012 | 1015 |
+| base | sample T=1 | 1024 | 0.015 | 0.010 | 0.020 | 0.070 | 0.008 | 975 |
+| **GRPO-400** | greedy | 1024 | **0.318** | **0.533** | **0.094** | — | 0.366 | 765 |
+| GRPO-400 | greedy | 512 | 0.304 | 0.518 | 0.082 | — | 0.342 | 434 |
+| GRPO-400 | sample T=1 | 1024 | 0.250 | 0.410 | 0.090 | **0.550** | 0.374 | 812 |
+
+Reading: held-out 3-number greedy (53%) is *above* the training-prompt sampled rate (45%) → no memorization (each training
+prompt was seen ~once: 8 prompts/step × 400 steps = 3.2k of 240k). 4-number puzzles went 0 → 9.4% with zero 4-number
+training = transfer. Still 40% of greedy completions hit 1024 tokens; curve had not plateaued at step 400.
+
+Config: `--curriculum 3only --max_completion_length 1024 --num_generations 16 --generation_batch_size 512 --per_device_train_batch_size 4 --grad_accum 32
+--use_vllm --vllm_gpu_memory_utilization 0.35 --lr 1e-6 --beta 0`, DAPO loss, 7 Colab sessions (60-min reclaims), ~4.5 A100-hours.
 
 ## Countdown baseline (A100-40GB, 2026-09-08) — Qwen3.5-0.8B-Base, TinyZero prompt
 

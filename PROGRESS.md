@@ -24,7 +24,16 @@ Training-prompt solve rate (100-step means): 52.8% (400s) → 57.0% → 63.5% �
 budget + 1024-completion batches). Model tagged `step-800` on the Hub (root = step 800; `step-400` tag keeps stage 1).
 W&B: https://wandb.ai/vineethveligeti-asu/grpo-countdown/runs/cd08b-3only-s1b · curve: `countdown/results/curves_grpo800.png`
 Timing matrix (8-step runs): grad-ckpt off 15→12 s/train step; micro-batch 8/16 OOM on the 248k-vocab logits even with Liger; Liger @8 slower (18 s).
-**Held-out eval of step-800: blocked 2026-09-09 18:16 — Colab compute units = 0, A100 rejected.** Trying free T4 / local MPS.
+Held-out eval of step-800 (Colab units = 0, A100/T4 refused → run on the M1 Pro, MPS fp32 reference kernels, 107 min; same 500 puzzles, greedy, 1024 tokens):
+
+| model | solve (mix) | 3-number | 4-number (never trained) | clean format | mean len |
+|---|---|---|---|---|---|
+| base | 0.000 | 0.000 | 0.000 | 0.012 | 1015 |
+| GRPO step 400 | 0.318 | 0.533 | 0.094 | 0.366 | 765 |
+| **GRPO step 800** | **0.402** | **0.639** | **0.155** | 0.468 | 692 |
+
+Held-out 3-number 63.9% ≈ training-prompt plateau (~65%) → still no memorization; 4-number transfer 9.4% → 15.5% with zero 4-number
+training. pass@8 for step 800 not run (needs a GPU). Caveat: MPS run is fp32 reference kernels vs bf16 vLLM for the other rows.
 
 ## Countdown result (run #3, 2026-09-09) — Qwen3.5-0.8B-Base, GRPO, 3-number puzzles only, 400 steps
 

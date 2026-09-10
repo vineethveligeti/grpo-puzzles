@@ -17,6 +17,15 @@ Environment on Colab (2026-09-08): `trl`, `transformers`, `datasets`, `peft`, `a
 extension) — **skipped on purpose**, see README gotcha 2; it only accelerates a width-4 depthwise conv and
 falls back independently to `F.conv1d`.
 
+## Countdown stage 1b (2026-09-09 11:16–15:47 PT) — resume 400→800, DAPO clip-higher ε_high=0.28, gen batch 1024, no grad ckpt, vLLM 0.45
+
+Training-prompt solve rate (100-step means): 52.8% (400s) → 57.0% → 63.5% → **65.6% (700s)** → 62.5% at 800. Format 66→74%, length
+630→550, entropy 0.65→0.57. **Plateau from ~step 600 in the low/mid 60s.** ~13 s per optimizer step (was 31 s in stage 1; bigger vLLM
+budget + 1024-completion batches). Model tagged `step-800` on the Hub (root = step 800; `step-400` tag keeps stage 1).
+W&B: https://wandb.ai/vineethveligeti-asu/grpo-countdown/runs/cd08b-3only-s1b · curve: `countdown/results/curves_grpo800.png`
+Timing matrix (8-step runs): grad-ckpt off 15→12 s/train step; micro-batch 8/16 OOM on the 248k-vocab logits even with Liger; Liger @8 slower (18 s).
+**Held-out eval of step-800: blocked 2026-09-09 18:16 — Colab compute units = 0, A100 rejected.** Trying free T4 / local MPS.
+
 ## Countdown result (run #3, 2026-09-09) — Qwen3.5-0.8B-Base, GRPO, 3-number puzzles only, 400 steps
 
 Training-prompt solve rate (T=1 samples, 50-step means): 2.8% → 5.4% (100–149) → 18.6% (200–249) → 34.2% (300–349) → 41.3% (350–400).

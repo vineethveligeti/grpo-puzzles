@@ -82,8 +82,16 @@ def main():
         tok.pad_token = tok.eos_token
     model = None
     if not a.vllm:
-        dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-        model = AutoModelForCausalLM.from_pretrained(a.model, dtype=dtype, device_map="auto" if torch.cuda.is_available() else None)
+        if torch.cuda.is_available():
+            device, dtype = "cuda", torch.bfloat16
+        elif torch.backends.mps.is_available():   # Apple Silicon fallback: no fla kernels -> slow torch path; fp32 for safety
+            device, dtype = "mps", torch.float32
+        else:
+            device, dtype = "cpu", torch.float32
+        model = AutoModelForCausalLM.from_pretrained(a.model, dtype=dtype, device_map="auto" if device == "cuda" else None)
+        if device != "cuda":
+            model.to(device)
+        print(f"device={device} dtype={dtype}", flush=True)
         if a.adapter:
             from peft import PeftModel
             model = PeftModel.from_pretrained(model, a.adapter).merge_and_unload()

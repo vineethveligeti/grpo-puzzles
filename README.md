@@ -66,8 +66,8 @@ GPU: **A100 40 GB** is the comfortable choice for both projects. L4 (24 GB) work
    `GRPOTrainer`, TRL follows `config.architectures[0]`, loads the full VLM + `AutoProcessor`, treats it as a
    VLM, and (per TRL docs) defaults the dtype to **float32**. Our scripts instantiate the model themselves in bf16.
 2. **Hybrid linear attention needs kernels.** 18 of 24 layers are Gated DeltaNet. Without the `fla` package
-   transformers *silently* falls back to a slow, memory-hungry PyTorch path — there is no warning in transformers 5.16,
-   so check explicitly: `python -c "from fla.ops.gated_delta_rule import chunk_gated_delta_rule; print('fla OK')"`.
+   transformers falls back to a slow, memory-hungry PyTorch path — silently in 5.16; **5.17 does log**
+   `chunk_gated_delta_rule is falling back to its reference PyTorch implementation` (seen 2026-09-09). Check explicitly anyway: `python -c "from fla.ops.gated_delta_rule import chunk_gated_delta_rule; print('fla OK')"`.
    `pip install flash-linear-attention` covers the heavy op. `causal-conv1d` is a *second, minor* kernel (a depthwise
    conv of width 4); each kernel falls back independently, so if its from-source build fails you lose very little —
    skip it, or get a prebuilt one via `pip install kernels` + `from_pretrained(..., use_kernels=True)` (Hub repo

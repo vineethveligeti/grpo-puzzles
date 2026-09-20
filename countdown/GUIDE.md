@@ -199,7 +199,7 @@ before/after table and 5 samples. Then the parts that make people stop scrolling
 - **Base vs instruct** at 0.8B: `Qwen/Qwen3.5-0.8B` with the `qwen-instruct` template from TinyZero. Which learns faster? Does the base one reason "weirder"?
 - **Format reward on/off**: drop `format_reward` — does the answer reward still climb? (R1-Zero used both.)
 - **Group size** 8 vs 16 at fixed compute; **KL** 0 vs 0.01; **temperature** 1.0 vs 0.7.
-- **Interp add-on that fits your `llm_lesion_map` work:** save checkpoints every 50 steps and plot the per-layer
+- **Interp add-on:** save checkpoints every 50 steps and plot the per-layer
   weight-delta norm $\|W_t - W_0\|_F$ — do the 6 attention layers or the 18 DeltaNet layers move more? Does the
   change concentrate late or early in the stack? Nobody has posted this for a hybrid-architecture model.
 - **Token-level "aha" tracking:** frequency of `verify`, `wait`, `check`, `instead`, `=` in completions per step.

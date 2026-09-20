@@ -1,11 +1,15 @@
 # training outputs
 runs/
-results/
 wandb/
 *.safetensors
 *.bin
 *.pt
 checkpoint-*/
+colab_out/
+*.log
+*.stdout
+
+# eval results ARE tracked (countdown/results/*.json, *.csv, *.png)
 
 # python
 __pycache__/
@@ -16,3 +20,7 @@ __pycache__/
 # secrets
 .env
 *.token
+
+# local scratch
+_to_delete/
+.DS_Store
